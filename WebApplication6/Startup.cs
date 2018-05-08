@@ -26,7 +26,7 @@ namespace WebApplication6
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
-            //services.AddTransient<IPostRepository, EFPostRepository>();
+            services.AddTransient<IPostRepository, EFPostRepository>();
             services.AddMvc();
             
         }
@@ -51,10 +51,15 @@ namespace WebApplication6
                 //routes.MapRoute(
                 //    name: "default",
                 //    template: "{controller=Home}/{action=Index}/{id?}");
-              routes.MapRoute(
+                routes.MapRoute(
+              name: null,
+              template: "Page{page}",
+              defaults: new { controller = "Post", action = "List" }
+          );
+                routes.MapRoute(
               name: "Default",
               template: "{controller}/{action}/{id?}",
-              defaults: new { controller = "Game", action = "List" }
+              defaults: new { controller = "Post", action = "List" }
           );
             });
         }

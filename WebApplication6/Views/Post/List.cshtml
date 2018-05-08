@@ -1,4 +1,7 @@
-﻿@model IEnumerable<NewsSite.Domain.Entities.Post>
+﻿
+@using NewsSite.WebUi.Models
+@using NewsSite.WebUi.HtmlHelpers;
+@model PostListViewModel
 
 @{
     ViewData["Title"] = "List";
@@ -9,11 +12,15 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<div>
+    @Html.PageLinks(Model.PagingInfo, x => Url.Action("List", new { page = x }))
+</div>
+
 <table class="table">
     <thead>
         <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.PostId)
+              @*<th>
+                    @Html.DisplayNameFor(model => model.Posts.)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Title)
@@ -24,12 +31,13 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Category)
                 </th>
-                
+
             <th></th>
         </tr>
-    </thead>
+    </thead>*@
+    
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in @Model.Posts) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.PostId)
@@ -52,3 +60,5 @@
 }
     </tbody>
 </table>
+
+

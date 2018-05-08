@@ -10,15 +10,15 @@ namespace NewsSite.Domain.Concrete
     public class EFPostRepository: IPostRepository
     {
         // EFDbContext context = new EFDbContext();
-        private EFDbContext _context;
+        private EFDbContext context;
         public EFPostRepository(EFDbContext context)
         {
-            this._context = context;
+            this.context = context;
         }
 
         public IEnumerable<Post> Posts
         {
-            get { return _context.Posts; }
+            get { return context.Posts; }
         }
     }
 }
