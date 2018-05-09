@@ -8,5 +8,6 @@ namespace NewsSite.Domain.Abstract
     public interface IPostRepository
     {
         IEnumerable<Post> Posts { get; }
+        IEnumerable<Tag> Tags { get; }
     }
 }

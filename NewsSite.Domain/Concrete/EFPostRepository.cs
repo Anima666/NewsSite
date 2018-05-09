@@ -1,8 +1,10 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using NewsSite.Domain.Abstract;
 using NewsSite.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace NewsSite.Domain.Concrete
@@ -18,7 +20,11 @@ namespace NewsSite.Domain.Concrete
 
         public IEnumerable<Post> Posts
         {
-            get { return context.Posts; }
+            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).ToList(); }
+        }
+        public IEnumerable<Tag> Tags
+        {
+            get { return context.Tags; }
         }
     }
 }

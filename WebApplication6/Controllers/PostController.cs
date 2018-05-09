@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using NewsSite.Domain.Abstract;
 using NewsSite.Domain.Entities;
 using NewsSite.WebUi.Models;
+using System.Diagnostics;
 
 namespace NewsSite.WebUi.Controllers
 {
@@ -20,17 +21,23 @@ namespace NewsSite.WebUi.Controllers
             this.repository = repo;
         }
 
-        public ViewResult List(int page = 1)
+        public ViewResult List(string tag, int page = 1)
         {
             PostListViewModel model = new PostListViewModel
             {
-                Posts = repository.Posts.OrderBy(post => post.PostId).Skip((page - 1) * pageSize).Take(pageSize),
+                Posts = repository.Posts
+                .Where(p => tag == null)
+                .OrderBy(post => post.PostId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize),             
+
                 PagingInfo = new PagingInfo
                 {
                     CurrentPage = page,
                     ItemsPerPage = pageSize,
                     TotalItems = repository.Posts.Count()
-                }
+                },
+                CurrentTag = tag
             };
             return View(model);
         }
