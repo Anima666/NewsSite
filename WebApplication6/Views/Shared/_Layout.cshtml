@@ -24,11 +24,11 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div id="categories" class="col-sm-8">
+            <div id="posts" class="col-sm-8">
                 @RenderBody()
             </div>
-           <div class="col-sm-4">
-               tags cloud
+           <div id="tags" class="col-sm-4">
+               @await Component.InvokeAsync("NavTags")
            </div>
         </div>
     </div>

@@ -26,7 +26,7 @@ namespace NewsSite.WebUi.Controllers
             PostListViewModel model = new PostListViewModel
             {
                 Posts = repository.Posts
-                .Where(p => tag == null)
+                .Where(p => tag == null || p.PostTags.Count(a=> a.Tag.Name==tag)>0)
                 .OrderBy(post => post.PostId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize),             

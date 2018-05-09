@@ -10,7 +10,7 @@
 
         @foreach (var item in @Model.PostTags.Select(e => e.Tag))
         {
-            <p>@item.Name</p>
+            <div class="tags">@item.Name</div>
         }
 
         <a href="#" class="btn btn-primary">Go somewhere</a>
