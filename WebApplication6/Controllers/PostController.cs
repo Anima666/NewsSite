@@ -35,7 +35,6 @@ namespace NewsSite.WebUi.Controllers
                 {
                     CurrentPage = page,
                     ItemsPerPage = pageSize,
-                    //TotalItems = repository.Posts.Count()
                     TotalItems = tag == null ?
                     repository.Posts.Count() :
                     repository.Posts.Where(p => GetCountTags(tag, p) > 0).Count()
