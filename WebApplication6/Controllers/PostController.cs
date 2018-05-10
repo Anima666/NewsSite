@@ -26,20 +26,28 @@ namespace NewsSite.WebUi.Controllers
             PostListViewModel model = new PostListViewModel
             {
                 Posts = repository.Posts
-                .Where(p => tag == null || p.PostTags.Count(a=> a.Tag.Name==tag)>0)
+                .Where(p => tag == null || GetCountTags(tag, p) > 0)
                 .OrderBy(post => post.PostId)
                 .Skip((page - 1) * pageSize)
-                .Take(pageSize),             
+                .Take(pageSize),
 
                 PagingInfo = new PagingInfo
                 {
                     CurrentPage = page,
                     ItemsPerPage = pageSize,
-                    TotalItems = repository.Posts.Count()
+                    //TotalItems = repository.Posts.Count()
+                    TotalItems = tag == null ?
+                    repository.Posts.Count() :
+                    repository.Posts.Where(p => GetCountTags(tag, p) > 0).Count()
                 },
                 CurrentTag = tag
             };
             return View(model);
+        }
+
+        private static int GetCountTags(string tag, Post p)
+        {
+            return p.PostTags.Count(a => a.Tag.Name == tag);
         }
     }
 }

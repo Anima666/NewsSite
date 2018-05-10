@@ -28,7 +28,7 @@ namespace WebApplication6
             services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IPostRepository, EFPostRepository>();
             services.AddMvc();
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,16 +51,44 @@ namespace WebApplication6
                 //routes.MapRoute(
                 //    name: "default",
                 //    template: "{controller=Home}/{action=Index}/{id?}");
+
+                //   routes.MapRoute(null,
+                //    "",
+                //    new
+                //    {
+                //        controller = "Post",
+                //        action = "List",
+                //        tag = (string)null,
+                //        page = 1
+                //    }
+                //);
+
+                //   routes.MapRoute(
+                //       name: null,
+                //       template: "Page{page}",
+                //       defaults: new { controller = "Post", action = "List", tag = (string)null },
+                //       constraints: new { page = @"\d+" }
+                //   );
+
+                //   routes.MapRoute(null,
+                //       "{tag}",
+                //       new { controller = "Post", action = "List", page = 1 }
+                //   );
+
+                routes.MapRoute(
+             name: null,
+             template: "{tag}/Page{page}",
+             defaults: new { controller = "Post", action = "List", tag = (string)null});
+
                 routes.MapRoute(
               name: null,
               template: "Page{page}",
-              defaults: new { controller = "Post", action = "List" }
-          );
-                routes.MapRoute(
+              defaults: new { controller = "Post", action = "List" });
+
+              routes.MapRoute(
               name: "Default",
               template: "{controller}/{action}/{id?}",
-              defaults: new { controller = "Post", action = "List" }
-          );
+              defaults: new { controller = "Post", action = "List" });
             });
         }
     }
