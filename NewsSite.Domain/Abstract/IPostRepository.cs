@@ -9,5 +9,8 @@ namespace NewsSite.Domain.Abstract
     {
         IEnumerable<Post> Posts { get; }
         IEnumerable<Tag> Tags { get; }
+
+        void SavePost(Post post);
+        Post DeletePost(int postId);
     }
 }

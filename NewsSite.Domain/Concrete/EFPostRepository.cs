@@ -26,5 +26,32 @@ namespace NewsSite.Domain.Concrete
         {
             get { return context.Tags; }
         }
+
+        public Post DeletePost(int postId)
+        {
+            Post dbEntry = context.Posts.Find(postId);
+            if (dbEntry != null)
+            {
+                context.Posts.Remove(dbEntry);
+                context.SaveChanges();
+            }
+            return dbEntry;
+        }
+
+        public void SavePost(Post post)
+        {
+            if (post.PostId == 0)
+                context.Posts.Add(post);
+            else
+            {
+                Post dbEntry = context.Posts.Find(post.PostId); //mauby use using
+                if (dbEntry != null)
+                {
+                    dbEntry.Title = post.Title;
+                    dbEntry.Description = post.Description;
+                }
+            }
+            context.SaveChanges();
+        }
     }
 }

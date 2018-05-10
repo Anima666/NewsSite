@@ -1,0 +1,55 @@
+﻿@model IEnumerable<NewsSite.Domain.Entities.Post>
+    @{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    <h2>Index</h2>
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { item.PostId  }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @*@Html.ActionLink("Delete", "Delete", new { item.PostId })*@
+                        @*<a asp-controller="Admin"
+                           asp-action="Delete"
+
+                           asp-route-id=@item.PostId>
+                            Delete
+                        </a>*@
+                        @using (Html.BeginForm("Delete", "Admin"))
+                        {
+                            @Html.Hidden("PostId", item.PostId)
+                            <input type="submit"
+                                   class="btn btn-default btn-xs"
+                                   value="Удалить" />
+                        }
+
+                    </td>
+                </tr>
+}
+        </tbody>
+    </table>
