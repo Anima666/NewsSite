@@ -49,6 +49,9 @@ namespace NewsSite.Domain.Concrete
                 {
                     dbEntry.Title = post.Title;
                     dbEntry.Description = post.Description;
+                    dbEntry.Text = post.Text;
+                    dbEntry.DateChanged = DateTime.Now;
+                    //dbEntry.PostTags = post;
                 }
             }
             context.SaveChanges();

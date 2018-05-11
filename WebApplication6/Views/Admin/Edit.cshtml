@@ -7,22 +7,35 @@
 @using (Html.BeginForm("Edit", "Admin"))
 {
     <div class="panel-body">
-        @Html.HiddenFor(m => m.PostId)
+        @*@Html.HiddenFor(m => m.PostId)*@
         @foreach (var property in ViewData.ModelMetadata.Properties)
         {
             if (property.PropertyName != "PostId")
             {
                 <div class="form-group">
                     <label>@(property.DisplayName ?? property.PropertyName)</label>
-                    @if (property.PropertyName == "Description")
-                        {
+                    @if (property.PropertyName == "Text")
+                    {
                         @Html.TextArea(property.PropertyName, null,
                                 new { @class = "form-control", rows = 5 })
                     }
                     else
                     {
-                        @Html.TextBox(property.PropertyName, null,
-                                new { @class = "form-control" })
+                        if (property.PropertyName == "PostTags")
+                        {
+                            @foreach (var item in @Model.PostTags.Select(e => e.Tag))
+                            {
+                                @*<div class="badge badge-primary">*@
+                                <input type="text" name="TagId[@item.TagId]" value="@item.Name.ToUpper()" class="form-control badge-primary" />
+                                @*</div>*@
+                            }
+
+                        }
+                        else
+                        {
+                            @Html.TextBox(property.PropertyName, null,
+                                             new { @class = "form-control" })
+                        }
                     }
                     @Html.ValidationMessage(property.PropertyName)
                 </div>
@@ -30,11 +43,12 @@
         }
     </div>
     <div class="panel-footer">
-        <input type="submit" value="Сохранить" class="btn btn-primary" />
-        @Html.ActionLink("Отменить изменения и вернуться к списку", "Index", null, new
-       {
-           @class = "btn btn-default"
-       })
+        <input type="submit" value="Сохранить" class="btn btn-success" />
+        <a asp-controller="Post" asp-action="List" class="btn btn-secondary">Отменить</a>
+        @*@Html.ActionLink("Отменить изменения и вернуться к списку", "Index", null, new
+            {
+                @class = "btn btn-Secondary"
+            })*@
     </div>
 
 }

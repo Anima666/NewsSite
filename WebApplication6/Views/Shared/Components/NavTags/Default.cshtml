@@ -1,18 +1,18 @@
 ﻿@model IEnumerable<string>
 
-    @Html.ActionLink("Домой", "List", "Post", null,
-    new { @class = "btn btn-block btn-default btn-lg" })
+<a asp-controller="Post" asp-action="List" asp-route-page="" class="btn btn-block btn-default btn-lg">Domou</a>
 
-    @foreach (var link in Model)
+
+@foreach (var link in Model)
 {
-        @Html.RouteLink(link, new
-    {
-        controller = "Post",
-        action = "List",
-        tag = link,
-        page = 1
-    }, new
-    {
-        @class = "btn btn-block btn-default btn-lg"
-    })
+    @Html.RouteLink(link, new
+{
+    controller = "Post",
+    action = "List",
+    tag = link,
+    page = 1
+}, new
+{
+    @class = "btn btn-block btn-default btn-lg"
+})
 }

@@ -9,6 +9,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NewsSite.Domain.Abstract;
+using NewsSite.WebUi.Models;
+using Microsoft.AspNetCore.Identity;
+using Westwind.AspNetCore.Markdown;
+using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
 
 namespace WebApplication6
 {
@@ -27,7 +32,13 @@ namespace WebApplication6
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IPostRepository, EFPostRepository>();
-            services.AddMvc();
+
+            //services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+            //.AddEntityFrameworkStores<ApplicationDataContext, Guid>()
+            // .AddDefaultTokenProviders();
+
+
+                 services.AddMvc();
 
         }
 
@@ -45,6 +56,8 @@ namespace WebApplication6
             }
 
             app.UseStaticFiles();
+
+            //app.UseMarkdown();
 
             app.UseMvc(routes =>
             {
@@ -78,17 +91,17 @@ namespace WebApplication6
                 routes.MapRoute(
              name: null,
              template: "{tag}/Page{page}",
-             defaults: new { controller = "Post", action = "List", tag = (string)null});
+             defaults: new { controller = "Post", action = "List", tag = (string)null });
 
                 routes.MapRoute(
               name: null,
               template: "Page{page}",
               defaults: new { controller = "Post", action = "List" });
 
-              routes.MapRoute(
-              name: "Default",
-              template: "{controller}/{action}/{id?}",
-              defaults: new { controller = "Post", action = "List" });
+                routes.MapRoute(
+                name: "Default",
+                template: "{controller}/{action}/{id?}",
+                defaults: new { controller = "Post", action = "List" });
             });
         }
     }
