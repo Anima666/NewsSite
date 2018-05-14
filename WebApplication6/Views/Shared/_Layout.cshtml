@@ -17,25 +17,73 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
-   
-    
+
+
 </head>
 <body>
-    <!-- As a link -->
 
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">News Site</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    @*<li class="nav-item active">
+                        <a class="nav-link" href="#">
+                            Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>*@
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <p>@User.Identity.Name</p>
 
-    <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand mb-0 h1" href="#">NEWS</a>
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a asp-controller="Admin" asp-action="Index">Admin</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
-        </form>
+                        <form method="post" asp-controller="Account" asp-action="LogOff">
+                            <input type="submit" value="Выход" />
+                        </form>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="Account" asp-action="Login" class="nav-link">Вход</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Account" asp-action="Register" class="nav-link">Регистрация</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
     </nav>
+
+
+    @*<nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand mb-0 h1" href="#">NEWS</a>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a asp-controller="Admin" asp-action="Index">Admin</a>
+                </li>
+                <li>
+
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </nav>*@
 
     <div class="container">
         <div class="row">

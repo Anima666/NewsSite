@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Westwind.AspNetCore.Markdown;
 using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
+using NewsSite.Domain.Entities;
 
 namespace WebApplication6
 {
@@ -33,12 +34,17 @@ namespace WebApplication6
             services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IPostRepository, EFPostRepository>();
 
+            services.AddDbContext<ApplicationContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("TestAuth")));
+            services.AddIdentity<User, IdentityRole>()
+              .AddEntityFrameworkStores<ApplicationContext>();
+
             //services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
             //.AddEntityFrameworkStores<ApplicationDataContext, Guid>()
             // .AddDefaultTokenProviders();
 
 
-                 services.AddMvc();
+            services.AddMvc();
 
         }
 
@@ -55,6 +61,7 @@ namespace WebApplication6
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseAuthentication();
             app.UseStaticFiles();
 
             //app.UseMarkdown();
