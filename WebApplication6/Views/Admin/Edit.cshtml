@@ -1,54 +1,112 @@
-﻿@model NewsSite.Domain.Entities.Post
+﻿@using NewsSite.Domain.Entities
+@model NewsSite.WebUi.Models.EditPostViewModel
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit2";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2>Редактирование поста «@Model.Title»</h2>
-@using (Html.BeginForm("Edit", "Admin"))
-{
+
+
+<link href="~/css/magicsuggest.css" rel="stylesheet" type="text/css">
+
+<h3>Редактирование поста «@Model.Post.Title»</h3>
+
+<script>
+    var tags = [];
+    var InitTags = [];
+</script>
+
+<hr />
+<form asp-action="Edit" asp-controller="Admin" method="post" id="FormEdit">
     <div class="panel-body">
-        @*@Html.HiddenFor(m => m.PostId)*@
-        @foreach (var property in ViewData.ModelMetadata.Properties)
-        {
-            if (property.PropertyName != "PostId")
-            {
-                <div class="form-group">
-                    <label>@(property.DisplayName ?? property.PropertyName)</label>
-                    @if (property.PropertyName == "Text")
-                    {
-                        @Html.TextArea(property.PropertyName, null,
-                                new { @class = "form-control", rows = 5 })
-                    }
-                    else
-                    {
-                        if (property.PropertyName == "PostTags")
-                        {
-                            @foreach (var item in @Model.PostTags.Select(e => e.Tag))
-                            {
-                                @*<div class="badge badge-primary">*@
-                                <input type="text" name="TagId[@item.TagId]" value="@item.Name.ToUpper()" class="form-control badge-primary" />
-                                @*</div>*@
-                            }
+        <div class="form-group">
+            <input type="hidden" asp-for="@Model.Post.PostId" />
+            <div class="form-group">
+                <label asp-for="@Model.Post.Title"></label>
+                <input asp-for="@Model.Post.Title" class="form-control" />
+            </div>
 
-                        }
-                        else
-                        {
-                            @Html.TextBox(property.PropertyName, null,
-                                             new { @class = "form-control" })
-                        }
-                    }
-                    @Html.ValidationMessage(property.PropertyName)
-                </div>
-            }
-        }
+            <div class="form-group">
+                <label asp-for="@Model.Post.Description"></label>
+                <input asp-for="@Model.Post.Description" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <div id="ArrTags" class="form-control"></div>
+            </div>
+
+            <input asp-for="@Model.Post.Category" class="form-control" />
+
+            <input type="text" id="MarkDown">
+
+
+            @*<input asp-for="@Model.Post.Text" />*@
+            <textarea asp-for="@Model.Post.Text" class="form-control" hidden></textarea>
+
+
+            @*<input type="type" name="name" value="" />*@
+
+          
+        </div>
     </div>
+
     <div class="panel-footer">
-        <input type="submit" value="Сохранить" class="btn btn-success" />
+        <input type="submit" value="Сохранить" class="btn btn-success" onclick="SaveMarkDownText()" />
         <a asp-controller="Post" asp-action="List" class="btn btn-secondary">Отменить</a>
-        @*@Html.ActionLink("Отменить изменения и вернуться к списку", "Index", null, new
-            {
-                @class = "btn btn-Secondary"
-            })*@
     </div>
+</form>
 
+
+
+@foreach (var item in Model.Post.PostTags.Select(e => e.Tag))
+{
+    <script>
+        InitTags.push("@item.Name");
+    </script>
 }
+
+@foreach (var item in Model.Tags)
+{
+    <script>
+        tags.push("@item.Name")
+    </script>
+}
+
+<script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script src="~/js/magicsuggest.js"></script>
+<script>
+    var simplemde = new SimpleMDE({ element: document.getElementById("MarkDown") });
+    simplemde.value("@Model.Post.Text");
+
+    var instance = $('#ArrTags').magicSuggest({
+        data: tags,
+        value: InitTags
+    });
+
+    function CreateInputTag() {
+
+        for (var i = 0; i < instance.getSelection().length; i++) {
+            var elementJq = $('<input>', {
+                value: instance.getSelection()[i].name,
+                name: "tags[" + i + "].Name",
+                type: "hidden"
+
+            });
+
+            $('#FormEdit').append(elementJq);
+        }
+    }
+
+    function SaveMarkDownText() {
+        $("#Post_Text").val(simplemde.value());
+
+        CreateInputTag();
+       
+    }
+</script>
+<a onclick="SaveMarkDownText()" href="#">content</a>
+

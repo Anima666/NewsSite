@@ -23,4 +23,8 @@
     <ProjectReference Include="..\NewsSite.Domain\NewsSite.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\tags\" />
+  </ItemGroup>
+
 </Project>

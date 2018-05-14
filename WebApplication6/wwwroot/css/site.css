@@ -16,3 +16,7 @@
     text-decoration:none;
     color:black;
 }
+.ms-sel-item {
+    padding:10px;
+    background:green;
+}

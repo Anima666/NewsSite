@@ -9,8 +9,6 @@ namespace NewsSite.WebUi.Models
     public class PostListViewModel
     {
         public IEnumerable<Post> Posts { get; set; }
-        public IEnumerable<Tag> Tags { get; set; }
-
         public PagingInfo PagingInfo { get; set; }
         public string CurrentTag { get; set; }
 

@@ -26,8 +26,8 @@ namespace NewsSite.WebUi.Controllers
             PostListViewModel model = new PostListViewModel
             {
                 Posts = repository.Posts
-                .Where(p => tag == null || GetCountTags(tag, p) > 0)
-                .OrderBy(post => post.PostId)
+                .Where(p => tag == null )
+                .OrderByDescending(post => post.DateChanged)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize),
 
@@ -42,6 +42,12 @@ namespace NewsSite.WebUi.Controllers
                 CurrentTag = tag
             };
             return View(model);
+        }
+
+        public ViewResult ShowPost(int id=1)
+        {
+            var Post = repository.Posts.Where(post => post.PostId==id).FirstOrDefault();
+            return View(Post);
         }
 
         private static int GetCountTags(string tag, Post p)

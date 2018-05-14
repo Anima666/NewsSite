@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NewsSite.Domain.Abstract;
 using NewsSite.Domain.Entities;
+using NewsSite.WebUi.Models;
 
 namespace NewsSite.WebUi.Controllers
 {
@@ -29,9 +30,15 @@ namespace NewsSite.WebUi.Controllers
 
         public ViewResult Edit(int PostId)
         {
-            Post Post = repository.Posts
-                .FirstOrDefault(p => p.PostId == PostId);
-            return View(Post);
+            var model = new EditPostViewModel
+            {
+                Post = repository.Posts
+                .FirstOrDefault(p => p.PostId == PostId),
+
+                Tags = repository.Tags.OrderBy(tag => tag.Name)
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -48,13 +55,17 @@ namespace NewsSite.WebUi.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(Post post)
+        public ActionResult Edit(Post post, List<Tag> tags)
         {
             if (ModelState.IsValid)
             {
-                repository.SavePost(post);
-                TempData["message"] = string.Format("Изменения в игре \"{0}\" были сохранены", post.Title);
+                Post dbEntry = repository.Posts.Where(p=> p.PostId == post.PostId).FirstOrDefault();
+
+                repository.SavePost(dbEntry, tags);
+
+                TempData["message"] = string.Format("Изменения в посту \"{0}\" были сохранены", post.Title);
                 return RedirectToAction("Index");
+
             }
             else
             {

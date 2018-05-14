@@ -18,7 +18,7 @@ namespace NewsSite.WebUi.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            IEnumerable<string> categories = repository.Tags.Select(x => x.Name);
+            IEnumerable<string> categories = repository.Categories.Select(x => x.Name);
 
             return View(categories);
         }

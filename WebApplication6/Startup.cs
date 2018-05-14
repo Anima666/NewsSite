@@ -87,6 +87,10 @@ namespace WebApplication6
                 //       "{tag}",
                 //       new { controller = "Post", action = "List", page = 1 }
                 //   );
+                routes.MapRoute(
+             name: null,
+             template: "{controller=Post}/{action=ShowPost}/{id?}"
+             );
 
                 routes.MapRoute(
              name: null,

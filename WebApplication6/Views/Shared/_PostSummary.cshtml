@@ -4,7 +4,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h1><a asp-controller="Admin" asp-action="Edit" asp-route-PostId="@Model.PostId">@Model.Title.ToUpper()</a></h1>
+        <h1><a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId">@Model.Title.ToUpper()</a></h1>
     </div>
     <div class="card-body">
         @Model.Description

@@ -9,8 +9,10 @@ namespace NewsSite.Domain.Abstract
     {
         IEnumerable<Post> Posts { get; }
         IEnumerable<Tag> Tags { get; }
+        IEnumerable<Category> Categories { get; }
 
-        void SavePost(Post post);
+        // void SavePost(Post post);
         Post DeletePost(int postId);
+        void SavePost(Post post, List<Tag> tags);
     }
 }
