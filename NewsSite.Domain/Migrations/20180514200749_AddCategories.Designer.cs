@@ -11,9 +11,10 @@ using System;
 namespace NewsSite.Domain.Migrations
 {
     [DbContext(typeof(EFDbContext))]
-    partial class EFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180514200749_AddCategories")]
+    partial class AddCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,7 +87,7 @@ namespace NewsSite.Domain.Migrations
             modelBuilder.Entity("NewsSite.Domain.Entities.Post", b =>
                 {
                     b.HasOne("NewsSite.Domain.Entities.Category", "Category")
-                        .WithMany("Posts")
+                        .WithMany()
                         .HasForeignKey("CategoryId");
                 });
 
