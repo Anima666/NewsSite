@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NewsSite.Domain.Abstract;
 using NewsSite.Domain.Entities;
@@ -9,6 +10,7 @@ using NewsSite.WebUi.Models;
 
 namespace NewsSite.WebUi.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
         IPostRepository repository;
@@ -27,7 +29,7 @@ namespace NewsSite.WebUi.Controllers
         {
             return View("Edit", new Post());
         }
-
+        
         public ViewResult Edit(int PostId)
         {
             var model = new EditPostViewModel

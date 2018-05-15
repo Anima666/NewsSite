@@ -13,6 +13,7 @@ using NewsSite.WebUi.Models;
 using Microsoft.AspNetCore.Identity;
 using Westwind.AspNetCore.Markdown;
 using Markdig;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Markdig.Extensions.AutoIdentifiers;
 using NewsSite.Domain.Entities;
 
@@ -36,13 +37,37 @@ namespace WebApplication6
 
             services.AddDbContext<ApplicationContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("TestAuth")));
+
             services.AddIdentity<User, IdentityRole>()
-              .AddEntityFrameworkStores<ApplicationContext>();
+              .AddEntityFrameworkStores<ApplicationContext>().AddDefaultTokenProviders(); ;
 
-            //services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
-            //.AddEntityFrameworkStores<ApplicationDataContext, Guid>()
-            // .AddDefaultTokenProviders();
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
+                options.User.RequireUniqueEmail = true;
+            });
 
+            services.AddAuthentication()
+            .AddFacebook(facebookOptions =>
+                {
+                    facebookOptions.AppId = "185759802078663";
+                    facebookOptions.AppSecret = "d0c6f350bd4bd0b6cbab8855f073bcd5";
+                })
+             .AddTwitter(options =>
+              {
+                  options.ConsumerKey = "lRUbVkZ4gFBXUJ8n0q7Qj0eFV";
+                  options.ConsumerSecret = "TgUvk9OyhhaWyJIGazRW1N6EDdDXl273MyuSkaCi5JhUQ5UPCP";
+              })
+              .AddVkontakte(options =>
+              {
+                  options.ClientId = "6475339";
+                  options.ClientSecret = "vdu1OTQMRavA3Z8Fbdfk";
+                 
+              }); 
 
             services.AddMvc();
 

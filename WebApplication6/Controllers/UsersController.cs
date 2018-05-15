@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NewsSite.Domain.Entities;
@@ -9,6 +10,7 @@ using NewsSite.WebUi.ViewModel;
 
 namespace NewsSite.WebUi.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
         UserManager<User> _userManager;
@@ -26,7 +28,7 @@ namespace NewsSite.WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, Year = model.Year };
+                User user = new User { Email = model.Email, UserName = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -50,7 +52,7 @@ namespace NewsSite.WebUi.Controllers
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email, Year = user.Year };
+            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email };
             return View(model);
         }
 
@@ -64,8 +66,7 @@ namespace NewsSite.WebUi.Controllers
                 {
                     user.Email = model.Email;
                     user.UserName = model.Email;
-                    user.Year = model.Year;
-
+               
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
                     {

@@ -21,5 +21,21 @@
     background:green;
 }
 body{
-    padding-top:60px;
+    padding-top:90px;
+}
+.input-validation-error{
+    background-color:red;
+    color:white;
+}
+#Facebook {
+    background-color: #3b5998;
+    color: white;
+}
+#Twitter {
+    background-color: #00aced;
+    color: white;
+}
+#Vkontakte {
+    background-color: #45668e;
+    color:white;
 }

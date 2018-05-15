@@ -10,7 +10,6 @@
     {
         <tr>
             <td>@user.Email</td>
-            <td>@user.Year</td>
             <td>
                 <form asp-action="Delete" asp-route-id="@user.Id" method="post">
                     <a class="btn btn-sm btn-primary" asp-action="ChangePassword" asp-route-id="@user.Id">Сменить пароль</a>
