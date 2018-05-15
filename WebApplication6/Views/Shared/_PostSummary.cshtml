@@ -2,21 +2,41 @@
 @model NewsSite.Domain.Entities.Post;
 @using NewsSite.WebUi.HtmlHelpers;
 
-<div class="card">
-    <div class="card-header">
-        <h1><a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId">@Model.Title.ToUpper()</a></h1>
-    </div>
-    <div class="card-body">
-        @Model.Description
-        <br />
-        <br />
+@*<div class="card">
+        <div class="card-header">
+            <h1><a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId">@Model.Title.ToUpper()</a></h1>
+        </div>
+        <div class="card-body">
+            @Model.Description
+            <br />
+            <br />
 
-        @foreach (var item in @Model.PostTags.Select(e => e.Tag))
-        {
-            <div class="badge badge-primary">
-                @item.Name.ToUpper()
-            </div>
-        }
+           
+
+        </div>
+    </div>*@
+
+<!-- Blog Post -->
+<div class="card mb-4">
+    <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
+    <div class="card-body">
+        <h2 class="card-title">@Model.Title</h2>
+
+        <p class="card-text">@Model.Description</p>
+        <p>
+            @foreach (var item in @Model.PostTags.Select(e => e.Tag))
+            {
+                <div class="badge badge-primary">
+                    @item.Name.ToUpper()
+                </div>
+            }
+        </p>
+        <a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId" class="btn btn-primary">Read More &rarr;</a>
+
+    </div>
+    <div class="card-footer text-muted">
+        Posted on @Model.DateChanged.ToString("MMMM' 'dd', 'yyyy' at 'hh':'mm' '") 
+        <a href="#">Start Bootstrap</a>
 
     </div>
 </div>
