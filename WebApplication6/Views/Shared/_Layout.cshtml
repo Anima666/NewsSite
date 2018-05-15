@@ -48,10 +48,11 @@
                     </li>*@
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <p>@User.Identity.Name</p>
+                    <a class="nav-link">@User.Identity.Name </a>
+                      
 
                         <form method="post" asp-controller="Account" asp-action="LogOff">
-                            <input type="submit" value="Выход" />
+                            <input type="submit" value="Выход" class="nav-link"/>
                         </form>
                     }
                     else
