@@ -28,7 +28,8 @@ namespace NewsSite.Domain.Entities
 
         public virtual ICollection<PostTag> PostTags { get; } = new List<PostTag>();
 
-        public virtual Category Category { get; set; }
+       // public int CategoryId { get; set; }
+        public  Category Category { get; set; }
 
     }
 }

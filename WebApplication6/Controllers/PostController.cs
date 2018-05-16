@@ -8,6 +8,7 @@ using NewsSite.Domain.Abstract;
 using NewsSite.Domain.Entities;
 using NewsSite.WebUi.Models;
 using System.Diagnostics;
+using NewsSite.Domain.Concrete;
 
 namespace NewsSite.WebUi.Controllers
 {
@@ -18,7 +19,7 @@ namespace NewsSite.WebUi.Controllers
 
         public PostController(IPostRepository repo)
         {
-            this.repository = repo;
+            this.repository = repo;          
         }
 
         public ViewResult List(string tag, int page = 1)
@@ -26,10 +27,12 @@ namespace NewsSite.WebUi.Controllers
             PostListViewModel model = new PostListViewModel
             {
                 Posts = repository.Posts
-                .Where(p => tag == null )
+                .Where(p => tag == null || tag == p.Category.Name)
                 .OrderByDescending(post => post.DateChanged)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize),
+
+
 
                 PagingInfo = new PagingInfo
                 {
@@ -44,15 +47,31 @@ namespace NewsSite.WebUi.Controllers
             return View(model);
         }
 
-        public ViewResult ShowPost(int id=1)
+        public ViewResult ShowPost(int id = 1)
         {
-            var Post = repository.Posts.Where(post => post.PostId==id).FirstOrDefault();
-            return View(Post);
+            PostViewModel model = new PostViewModel
+            {
+                Post = repository.Posts.Where(post => post.PostId == id).FirstOrDefault(),
+                Comments = repository.Comments.Where(c => c.PostId == id)
+            };
+
+            return View(model);
         }
 
         private static int GetCountTags(string tag, Post p)
         {
             return p.PostTags.Count(a => a.Tag.Name == tag);
         }
+
+        [HttpPost]
+        public ActionResult AddComment(int? parentId, int postId, string Text)
+        {
+
+            repository.AddComment(parentId,postId,Text); //add validation
+ 
+            return RedirectToAction("ShowPost");
+        }
+
+
     }
 }

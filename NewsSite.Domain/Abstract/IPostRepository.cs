@@ -11,8 +11,11 @@ namespace NewsSite.Domain.Abstract
         IEnumerable<Tag> Tags { get; }
         IEnumerable<Category> Categories { get; }
 
+        IEnumerable<Comment> Comments { get; }
+
         // void SavePost(Post post);
         Post DeletePost(int postId);
         void SavePost(Post post, List<Tag> tags);
+        void AddComment(int? parentId, int postId, string Text);
     }
 }

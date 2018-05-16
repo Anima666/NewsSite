@@ -10,7 +10,7 @@ using NewsSite.WebUi.Models;
 
 namespace NewsSite.WebUi.Controllers
 {
-    [Authorize(Roles = "admin")]
+   // [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
         IPostRepository repository;
@@ -37,6 +37,8 @@ namespace NewsSite.WebUi.Controllers
                 Post = repository.Posts
                 .FirstOrDefault(p => p.PostId == PostId),
 
+                Categories = repository.Categories,
+
                 Tags = repository.Tags.OrderBy(tag => tag.Name)
             };
 
@@ -61,9 +63,8 @@ namespace NewsSite.WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-                Post dbEntry = repository.Posts.Where(p=> p.PostId == post.PostId).FirstOrDefault();
-
-                repository.SavePost(dbEntry, tags);
+             
+                repository.SavePost(post, tags);
 
                 TempData["message"] = string.Format("Изменения в посту \"{0}\" были сохранены", post.Title);
                 return RedirectToAction("Index");

@@ -20,7 +20,7 @@ namespace NewsSite.Domain.Concrete
 
         public IEnumerable<Post> Posts
         {
-            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).ToList(); }
+            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(c => c.Category).ToList(); }
         }
 
         public IEnumerable<Tag> Tags
@@ -31,6 +31,11 @@ namespace NewsSite.Domain.Concrete
         public IEnumerable<Category> Categories
         {
             get { return context.Categories; }
+        }
+
+        public IEnumerable<Comment> Comments
+        {
+            get { return context.Comments.Include(p => p.Post).ToList(); }
         }
 
         public Post DeletePost(int postId)
@@ -50,13 +55,17 @@ namespace NewsSite.Domain.Concrete
                 context.Posts.Add(post);
             else
             {
-                Post dbEntry = post;  //mauby use using
+                var posts = context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(p => p.Category).ToList();
+                // Post dbEntry = Posts.Find(post.PostId);  //mauby use using
+                Post dbEntry = posts.Where(p=>p.PostId==post.PostId).FirstOrDefault();
                 if (dbEntry != null)
                 {
                     dbEntry.Title = post.Title;
                     dbEntry.Description = post.Description;
                     dbEntry.Text = post.Text;
                     dbEntry.DateChanged = DateTime.Now;
+
+                    dbEntry.Category = post.Category; //неработает
 
                     var FirstTags = dbEntry.PostTags.Select(e => e.Tag);
 
@@ -93,6 +102,18 @@ namespace NewsSite.Domain.Concrete
                 }
                 context.SaveChanges();
             }
+        }
+
+        public void AddComment(int? parentId, int postId, string Text)
+        {
+            var Comment = new Comment()
+            {
+                ParentId = parentId,
+                PostId = postId,
+                Text = Text
+            };
+            context.Comments.Add(Comment);
+            context.SaveChanges();
         }
     }
 }

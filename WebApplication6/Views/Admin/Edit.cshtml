@@ -25,6 +25,13 @@
                 <input asp-for="@Model.Post.Title" class="form-control" />
             </div>
 
+            <select asp-for="@Model.Post.Category.Name" class="form-control">
+                @foreach (var item in Model.Categories)
+                {
+                   <option>@item.Name</option>
+                }
+            </select>
+
             <div class="form-group">
                 <label asp-for="@Model.Post.Description"></label>
                 <input asp-for="@Model.Post.Description" class="form-control" />
@@ -34,7 +41,7 @@
                 <div id="ArrTags" class="form-control"></div>
             </div>
 
-            <input asp-for="@Model.Post.Category" class="form-control" />
+            @*<input asp-for="@Model.Post.Category" class="form-control" />*@
 
             <input type="text" id="MarkDown">
 
@@ -45,7 +52,7 @@
 
             @*<input type="type" name="name" value="" />*@
 
-          
+
         </div>
     </div>
 

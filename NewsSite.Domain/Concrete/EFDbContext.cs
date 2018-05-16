@@ -13,9 +13,12 @@ namespace NewsSite.Domain.Concrete
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<Comment> Comments { get; set; }
+
         public EFDbContext(DbContextOptions<EFDbContext> options): base(options)
         {
         }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

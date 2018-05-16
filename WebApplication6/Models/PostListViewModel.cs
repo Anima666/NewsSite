@@ -12,5 +12,9 @@ namespace NewsSite.WebUi.Models
         public PagingInfo PagingInfo { get; set; }
         public string CurrentTag { get; set; }
 
+
+        //тест
+       // public IEnumerable<Comment> Comments { get; set; }
+
     }
 }

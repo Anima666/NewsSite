@@ -11,9 +11,10 @@ using System;
 namespace NewsSite.Domain.Migrations
 {
     [DbContext(typeof(EFDbContext))]
-    partial class EFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180516120838_AddComments")]
+    partial class AddComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,13 +40,9 @@ namespace NewsSite.Domain.Migrations
 
                     b.Property<int?>("ParentId");
 
-                    b.Property<int?>("PostId");
-
                     b.Property<string>("Text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PostId");
 
                     b.ToTable("Comments");
                 });
@@ -99,13 +96,6 @@ namespace NewsSite.Domain.Migrations
                     b.HasKey("TagId");
 
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("NewsSite.Domain.Entities.Comment", b =>
-                {
-                    b.HasOne("NewsSite.Domain.Entities.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId");
                 });
 
             modelBuilder.Entity("NewsSite.Domain.Entities.Post", b =>
