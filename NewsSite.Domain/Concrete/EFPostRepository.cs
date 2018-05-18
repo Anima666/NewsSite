@@ -12,8 +12,8 @@ namespace NewsSite.Domain.Concrete
     public class EFPostRepository : IPostRepository
     {
         // EFDbContext context = new EFDbContext();
-        private EFDbContext context;
-        public EFPostRepository(EFDbContext context)
+        private ApplicationContext context;
+        public EFPostRepository(ApplicationContext context)
         {
             this.context = context;
         }
@@ -33,11 +33,17 @@ namespace NewsSite.Domain.Concrete
             get { return context.Categories; }
         }
 
+        public IEnumerable<User> Users
+        {
+            get { return context.Users; }
+        }
+
         public IEnumerable<Comment> Comments
         {
             get { return context.Comments.Include(p => p.Post).ToList(); }
         }
 
+ 
         public Post DeletePost(int postId)
         {
             Post dbEntry = context.Posts.Find(postId);
@@ -104,13 +110,15 @@ namespace NewsSite.Domain.Concrete
             }
         }
 
-        public void AddComment(int? parentId, int postId, string Text)
+        public void AddComment(int? parentId, int postId, string UserId, string Text)
         {
             var Comment = new Comment()
             {
                 ParentId = parentId,
                 PostId = postId,
-                Text = Text
+                Text = Text,
+                UserID = UserId,
+                PostedTime = DateTime.Now,
             };
             context.Comments.Add(Comment);
             context.SaveChanges();

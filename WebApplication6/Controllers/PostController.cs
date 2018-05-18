@@ -9,6 +9,8 @@ using NewsSite.Domain.Entities;
 using NewsSite.WebUi.Models;
 using System.Diagnostics;
 using NewsSite.Domain.Concrete;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace NewsSite.WebUi.Controllers
 {
@@ -16,10 +18,16 @@ namespace NewsSite.WebUi.Controllers
     {
         private IPostRepository repository;
         public int pageSize = 4;
-
-        public PostController(IPostRepository repo)
+        private UserManager<User> _userManager;
+        private Task<User> GetCurrentUserAsync()
         {
-            this.repository = repo;          
+            return _userManager.GetUserAsync(HttpContext.User);
+        }
+
+        public PostController(IPostRepository repo, UserManager<User> userManager)
+        {
+            this.repository = repo;
+            this._userManager = userManager;
         }
 
         public ViewResult List(string tag, int page = 1)
@@ -47,12 +55,30 @@ namespace NewsSite.WebUi.Controllers
             return View(model);
         }
 
-        public ViewResult ShowPost(int id = 1)
+        public async Task<IActionResult> ShowPost(int id = 1)
         {
+            Post post = repository.Posts.Where(p => p.PostId == id).FirstOrDefault();
+
+            User user = await _userManager.FindByIdAsync(post.UserID);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var CurentUser = await GetCurrentUserAsync();
+            string currentUserId = "";
+            if (CurentUser!=null)
+            currentUserId =  CurentUser.Id;
+
+
             PostViewModel model = new PostViewModel
             {
-                Post = repository.Posts.Where(post => post.PostId == id).FirstOrDefault(),
-                Comments = repository.Comments.Where(c => c.PostId == id)
+                Post = post,
+                Comments = repository.Comments.Where(c => c.PostId == id),
+                User = user,
+                Users = _userManager.Users,
+                CurrentUserId = currentUserId,
+                // User = repository.Users.Where(u => u.Id == post.UserID).FirstOrDefault(),
+                //User = user,
             };
 
             return View(model);
@@ -64,11 +90,11 @@ namespace NewsSite.WebUi.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddComment(int? parentId, int postId, string Text)
+        public ActionResult AddComment(int? parentId, int postId,string UserId, string Text)
         {
 
-            repository.AddComment(parentId,postId,Text); //add validation
- 
+            repository.AddComment(parentId, postId, UserId, Text); //add validation
+
             return RedirectToAction("ShowPost");
         }
 

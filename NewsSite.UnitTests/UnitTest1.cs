@@ -16,21 +16,21 @@ namespace NewsSite.UnitTests
         [TestMethod]
         public void Can_Paginate()
         {
-            // Организация (arrange)
-            Mock<IPostRepository> mock = new Mock<IPostRepository>();
-            mock.Setup(m => m.Posts).Returns(new List<Post>
-            {
-                new Post { PostId = 1, Title = "News1"},
-                new Post { PostId = 2, Title = "News2"},
-                new Post { PostId = 3, Title = "News3"},
-                new Post { PostId = 4, Title = "News4"},
-                new Post { PostId = 5, Title = "News5"}
-            });
-            PostController controller = new PostController(mock.Object);
-            controller.pageSize = 3;
+            //// Организация (arrange)
+            //Mock<IPostRepository> mock = new Mock<IPostRepository>();
+            //mock.Setup(m => m.Posts).Returns(new List<Post>
+            //{
+            //    new Post { PostId = 1, Title = "News1"},
+            //    new Post { PostId = 2, Title = "News2"},
+            //    new Post { PostId = 3, Title = "News3"},
+            //    new Post { PostId = 4, Title = "News4"},
+            //    new Post { PostId = 5, Title = "News5"}
+            //});
+            ////PostController controller = new PostController(mock.Object);
+            //controller.pageSize = 3;
 
-            // Действие (act)
-            PostListViewModel result = (PostListViewModel)controller.List(null, 2).Model;
+            //// Действие (act)
+            //PostListViewModel result = (PostListViewModel)controller.List(null, 2).Model;
 
             // Утверждение (assert)
             //List<Post> Post = resul;

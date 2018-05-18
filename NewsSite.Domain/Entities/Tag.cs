@@ -9,12 +9,6 @@ namespace NewsSite.Domain.Entities
         public int TagId { get; set; }
         public string Name { get; set; }
 
-        //public virtual ICollection<Post> Posts { get;  } = new List<Post>();
         public virtual ICollection<PostTag> PostTags { get; } = new List<PostTag>();
-
-        //public Tag()
-        //{
-        //    Posts = new List<Post>();
-        //}
     }
 }

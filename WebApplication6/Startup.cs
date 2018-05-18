@@ -32,7 +32,7 @@ namespace WebApplication6
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
+          //  services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IPostRepository, EFPostRepository>();
 
             services.AddDbContext<ApplicationContext>(options =>
@@ -56,16 +56,19 @@ namespace WebApplication6
                 {
                     facebookOptions.AppId = "185759802078663";
                     facebookOptions.AppSecret = "d0c6f350bd4bd0b6cbab8855f073bcd5";
+                    facebookOptions.Scope.Add("email");
                 })
              .AddTwitter(options =>
               {
                   options.ConsumerKey = "lRUbVkZ4gFBXUJ8n0q7Qj0eFV";
                   options.ConsumerSecret = "TgUvk9OyhhaWyJIGazRW1N6EDdDXl273MyuSkaCi5JhUQ5UPCP";
+                 // options.
               })
               .AddVkontakte(options =>
               {
-                  options.ClientId = "6475339";
-                  options.ClientSecret = "vdu1OTQMRavA3Z8Fbdfk";
+                  options.ClientId = "5886707";
+                  options.ClientSecret = "a9LgfX0W96138GYTq9uh";
+                  options.Scope.Add("email");
                  
               }); 
 

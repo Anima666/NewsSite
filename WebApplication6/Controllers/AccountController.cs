@@ -8,6 +8,7 @@ using NewsSite.WebUi.Services;
 using NewsSite.WebUi.ViewModel;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApplication6.Controllers;
@@ -192,8 +193,41 @@ namespace NewsSite.WebUi.Controllers
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                //return View("Login", new LoginViewModel { Email = email });
-                 return View("ExternalLogin", new ExternalLoginViewModel { Email = email });
+                var username = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+
+                string thumbnailUrl = null;
+                string nameIdentifier = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (info.LoginProvider == "Facebook")
+                {             
+                    thumbnailUrl = string.Format("https://graph.facebook.com/{0}/picture?type=large", nameIdentifier);
+                }
+
+                ExternalLoginViewModel model = new ExternalLoginViewModel { Email = email, UserName = username, UrlImage = thumbnailUrl };
+               
+      
+                    var user = new User { UserName = model.UserName, Email = model.Email, UrlImage = model.UrlImage };
+                    var result1 = await _userManager.CreateAsync(user);
+                    if (result1.Succeeded)
+                    {
+                        result1 = await _userManager.AddLoginAsync(user, info);
+                        if (result1.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                            return RedirectToLocal(returnUrl);
+                        }
+                    }
+                    AddErrors(result1);
+              
+
+                ViewData["ReturnUrl"] = returnUrl;
+                return View(nameof(ExternalLogin), model);
+
+
+                // await ExternalLoginConfirmation(new ExternalLoginViewModel { Email = email, UserName = username, UrlImage = thumbnailUrl });
+
+                //return RedirectToAction("ExternalLoginConfirmation", new ExternalLoginViewModel { Email = email , UserName = username, UrlImage = thumbnailUrl });
             }
         }
 
@@ -210,7 +244,7 @@ namespace NewsSite.WebUi.Controllers
                 {
                     throw new ApplicationException("Error loading external login information during confirmation.");
                 }
-                var user = new User { UserName = model.Email, Email = model.Email };
+                var user = new User { UserName = model.UserName, Email = model.Email, UrlImage = model.UrlImage };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

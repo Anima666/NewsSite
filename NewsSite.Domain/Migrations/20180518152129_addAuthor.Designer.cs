@@ -11,9 +11,10 @@ using System;
 namespace NewsSite.Domain.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class EFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180518152129_addAuthor")]
+    partial class addAuthor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -11,9 +11,10 @@ using System;
 namespace NewsSite.Domain.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class EFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180516233658_replaceAllInOtherContext")]
+    partial class replaceAllInOtherContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,13 +152,9 @@ namespace NewsSite.Domain.Migrations
 
                     b.Property<string>("Text");
 
-                    b.Property<string>("UserID");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("Comments");
                 });
@@ -181,13 +178,9 @@ namespace NewsSite.Domain.Migrations
                     b.Property<string>("Title")
                         .IsRequired();
 
-                    b.Property<string>("UserID");
-
                     b.HasKey("PostId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("Posts");
                 });
@@ -251,8 +244,6 @@ namespace NewsSite.Domain.Migrations
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
-
-                    b.Property<string>("UrlImage");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
@@ -321,10 +312,6 @@ namespace NewsSite.Domain.Migrations
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("NewsSite.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("NewsSite.Domain.Entities.Post", b =>
@@ -332,10 +319,6 @@ namespace NewsSite.Domain.Migrations
                     b.HasOne("NewsSite.Domain.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
-
-                    b.HasOne("NewsSite.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("NewsSite.Domain.Entities.PostTag", b =>

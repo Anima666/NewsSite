@@ -10,7 +10,7 @@ using System;
 
 namespace NewsSite.Domain.Migrations
 {
-    [DbContext(typeof(EFDbContext))]
+    [DbContext(typeof(ApplicationContext))]
     [Migration("20180514200749_AddCategories")]
     partial class AddCategories
     {

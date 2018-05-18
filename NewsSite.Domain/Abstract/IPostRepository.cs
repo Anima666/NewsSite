@@ -12,10 +12,13 @@ namespace NewsSite.Domain.Abstract
         IEnumerable<Category> Categories { get; }
 
         IEnumerable<Comment> Comments { get; }
+        IEnumerable<User> Users { get; }
+
+        //IEnumerable<User> Users { get; }
 
         // void SavePost(Post post);
         Post DeletePost(int postId);
         void SavePost(Post post, List<Tag> tags);
-        void AddComment(int? parentId, int postId, string Text);
+        void AddComment(int? parentId, int postId, string UserId, string Text);
     }
 }
