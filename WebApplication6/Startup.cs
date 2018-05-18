@@ -16,6 +16,9 @@ using Markdig;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Markdig.Extensions.AutoIdentifiers;
 using NewsSite.Domain.Entities;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace WebApplication6
 {
@@ -31,9 +34,12 @@ namespace WebApplication6
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = Configuration.GetConnectionString("DefaultConnection");
-          //  services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
+            string connection = Configuration.GetConnectionString("TestAuth");
+            services.AddDbContext<LocalizationContext>(options => options.UseSqlServer(connection));
+            //  services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IPostRepository, EFPostRepository>();
+            services.AddTransient<IStringLocalizer, EFStringLocalizer>();
+            services.AddSingleton<IStringLocalizerFactory>(new EFStringLocalizerFactory(connection));
 
             services.AddDbContext<ApplicationContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("TestAuth")));
@@ -72,13 +78,31 @@ namespace WebApplication6
                  
               }); 
 
-            services.AddMvc();
+            services.AddMvc().AddDataAnnotationsLocalization(options => {
+                options.DataAnnotationLocalizerProvider = (type, factory) =>
+                factory.Create(null);
+            }).AddViewLocalization(); 
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
+            var supportedCultures = new[]
+           {
+                new CultureInfo("en"),
+                new CultureInfo("ru"),
+                new CultureInfo("de")
+            };
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("ru"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
