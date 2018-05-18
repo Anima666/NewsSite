@@ -1,9 +1,11 @@
-﻿@model IEnumerable<string>
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model IEnumerable<string>
 @*<a asp-controller="Post" asp-action="List" asp-route-page="" class="btn btn-block btn-default btn-lg">Domou</a>*@
 
 <!-- Search Widget -->
 <div class="card my-4">
-    <h5 class="card-header">Search</h5>
+    <h5 class="card-header">@Localizer["Search"]</h5>
     <div class="card-body">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Search for...">
@@ -16,7 +18,7 @@
 
 <!-- Categories Widget -->
 <div class="card my-4">
-    <h5 class="card-header">Categories</h5>
+    <h5 class="card-header">@Localizer["Categories"]</h5>
     <div class="card-body">
         <div class="row">
             <div class="col-lg-6">

@@ -19,6 +19,7 @@ using NewsSite.Domain.Entities;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 namespace WebApplication6
 {
@@ -68,40 +69,45 @@ namespace WebApplication6
               {
                   options.ConsumerKey = "lRUbVkZ4gFBXUJ8n0q7Qj0eFV";
                   options.ConsumerSecret = "TgUvk9OyhhaWyJIGazRW1N6EDdDXl273MyuSkaCi5JhUQ5UPCP";
-                 // options.
+                  // options.
               })
               .AddVkontakte(options =>
               {
                   options.ClientId = "5886707";
                   options.ClientSecret = "a9LgfX0W96138GYTq9uh";
                   options.Scope.Add("email");
-                 
-              }); 
 
-            services.AddMvc().AddDataAnnotationsLocalization(options => {
+              });
+
+            services.AddMvc().AddDataAnnotationsLocalization(options =>
+            {
                 options.DataAnnotationLocalizerProvider = (type, factory) =>
                 factory.Create(null);
-            }).AddViewLocalization(); 
+            }).AddViewLocalization();
+
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en"),
+                new CultureInfo("ru"),
+                new CultureInfo("be"),
+            };
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("ru");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+
+            services.AddLocalization();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-
-            var supportedCultures = new[]
-           {
-                new CultureInfo("en"),
-                new CultureInfo("ru"),
-                new CultureInfo("de")
-            };
-
-            app.UseRequestLocalization(new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture("ru"),
-                SupportedCultures = supportedCultures,
-                SupportedUICultures = supportedCultures
-            });
+            var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(locOptions.Value);
 
             if (env.IsDevelopment())
             {

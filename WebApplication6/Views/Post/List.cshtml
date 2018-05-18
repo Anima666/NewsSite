@@ -7,18 +7,11 @@
     ViewData["Title"] = "News";
 }
 
-
-
 @foreach (var item in @Model.Posts)
 {
     @Html.Partial("_PostSummary", item)
-
-    @*foreach (var tag in item.PostTags.Select(e => e.Tag))
-    {
-        <p>@tag.Name;</p>
-    }*@
-
 }
+
 <div>
     @Html.PageLinks(Model.PagingInfo, x => Url.Action("List", new { page = x, tag = Model.CurrentTag }))
 </div>

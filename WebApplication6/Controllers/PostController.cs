@@ -11,6 +11,10 @@ using System.Diagnostics;
 using NewsSite.Domain.Concrete;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace NewsSite.WebUi.Controllers
 {
@@ -19,15 +23,29 @@ namespace NewsSite.WebUi.Controllers
         private IPostRepository repository;
         public int pageSize = 4;
         private UserManager<User> _userManager;
+        private IStringLocalizer loc ;
         private Task<User> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }
 
-        public PostController(IPostRepository repo, UserManager<User> userManager)
+        public PostController(IPostRepository repo, UserManager<User> userManager, IStringLocalizer loc)
         {
             this.repository = repo;
             this._userManager = userManager;
+            this.loc = loc;
+        }
+
+        [HttpPost]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return RedirectToAction("List");
         }
 
         public ViewResult List(string tag, int page = 1)

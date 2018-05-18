@@ -1,17 +1,8 @@
 ﻿
 @model NewsSite.Domain.Entities.Post;
 @using NewsSite.WebUi.HtmlHelpers;
-
-@*<div class="card">
-        <div class="card-header">
-            <h1><a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId">@Model.Title.ToUpper()</a></h1>
-        </div>
-        <div class="card-body">
-            @Model.Description
-            <br />
-            <br />
-        </div>
-    </div>*@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 
 <div class="card mb-4">
@@ -28,12 +19,11 @@
                 </div>
             }
         </p>
-        <a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId" class="btn btn-primary">Read More &rarr;</a>
+        <a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId" class="btn btn-primary"> @Localizer["Read More"] &rarr; </a>
 
     </div>
     <div class="card-footer text-muted">
-        Posted on @Model.DateChanged.ToString("MMMM' 'dd', 'yyyy' at 'hh':'mm' '") 
+        @Localizer["Posted on"] @Model.DateChanged.ToString("MMMM' 'dd', 'yyyy' at 'hh':'mm' '")
         <a href="#">Start Bootstrap</a>
-
     </div>
 </div>
