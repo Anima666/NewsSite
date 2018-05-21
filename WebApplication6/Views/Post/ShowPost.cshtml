@@ -24,7 +24,7 @@
 
     <!-- Date/Time -->
     @*<p>Posted on January 1, 2018 at 12:00 PM</p>*@
-    <p>@Localizer["Posted on"] @Model.Post.DateChanged.ToString("MMMM' 'dd', 'yyyy' at 'hh':'mm' '") </p>
+    <p>@Localizer["Posted on"] @Model.Post.DateChanged.ToString("f") </p>
 
     <div>
         <a asp-controller="Admin" asp-action="Edit" asp-route-PostId="@Model.Post.PostId">Edit</a> |
@@ -34,7 +34,7 @@
     <hr>
 
     <!-- Preview Image -->
-    <img class="img-fluid rounded" src="http://placehold.it/900x300" alt="">
+    <img class="img-fluid rounded" src="@Url.Content(Model.Post.Path)" alt="">
 
     <hr>
 

@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\lib\tags\" />
+    <Folder Include="wwwroot\Files\" />
   </ItemGroup>
 
 </Project>

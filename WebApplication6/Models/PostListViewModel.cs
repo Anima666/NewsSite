@@ -10,11 +10,7 @@ namespace NewsSite.WebUi.Models
     {
         public IEnumerable<Post> Posts { get; set; }
         public PagingInfo PagingInfo { get; set; }
-        public string CurrentTag { get; set; }
-
-
-        //тест
-       // public IEnumerable<Comment> Comments { get; set; }
+        public string CurrentCategory { get; set; }
 
     }
 }

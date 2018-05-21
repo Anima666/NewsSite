@@ -5,13 +5,15 @@ using NewsSite.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using System.Text;
 
 namespace NewsSite.Domain.Concrete
 {
     public class EFPostRepository : IPostRepository
     {
-        // EFDbContext context = new EFDbContext();
+  
         private ApplicationContext context;
         public EFPostRepository(ApplicationContext context)
         {
@@ -43,7 +45,7 @@ namespace NewsSite.Domain.Concrete
             get { return context.Comments.Include(p => p.Post).ToList(); }
         }
 
- 
+
         public Post DeletePost(int postId)
         {
             Post dbEntry = context.Posts.Find(postId);
@@ -55,58 +57,61 @@ namespace NewsSite.Domain.Concrete
             return dbEntry;
         }
 
-        public void SavePost(Post post, List<Tag> tags)
+        public void SavePost(Post post, List<Tag> tags, string userId)
         {
             if (post.PostId == 0)
-                context.Posts.Add(post);
+            {
+                AddNewPost(post, tags, userId);
+            }
             else
             {
-                var posts = context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(p => p.Category).ToList();
-                // Post dbEntry = Posts.Find(post.PostId);  //mauby use using
-                Post dbEntry = posts.Where(p=>p.PostId==post.PostId).FirstOrDefault();
-                if (dbEntry != null)
-                {
-                    dbEntry.Title = post.Title;
-                    dbEntry.Description = post.Description;
-                    dbEntry.Text = post.Text;
-                    dbEntry.DateChanged = DateTime.Now;
+                SaveCurrentPost(post, tags);
+            }
+            context.SaveChanges();
+        }
 
-                    dbEntry.Category = post.Category; //неработает
+        private void SaveCurrentPost(Post post, List<Tag> tags)
+        {
+            var allPost = context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(p => p.Category).ToList();
 
-                    var FirstTags = dbEntry.PostTags.Select(e => e.Tag);
+            Post dbEntry = allPost.Where(p => p.PostId == post.PostId).First();
+            if (dbEntry != null)
+            {
+                dbEntry.Title = post.Title;
+                dbEntry.Description = post.Description;
+                dbEntry.Text = post.Text;
+                dbEntry.DateChanged = DateTime.Now;
 
-                    //IEnumerable<Tag> Only = FirstTags.Except(tags);
+                if (post.Path != null)
+                    dbEntry.Path = post.Path;
 
-                    if (FirstTags.Count() > 0)
-                    {
-                        dbEntry.PostTags.Clear();
-                    }
-                    //var newarr = context.Tags.Distinct();
+                dbEntry.Category = context.Categories.Where(c => c.Name == post.Category.Name).First();
 
-                    for (int i = 0; i < tags.Count(); i++)
-                    {
-                        foreach (var item2 in context.Tags)
-                        {
-                            if (tags[i].Name != item2.Name)
-                            {
-                                // int index = tags.IndexOf();
-                                //  tags.RemoveAt(i);
-                                break;
-                            }
-                        }
+                var firstTags = dbEntry.PostTags.Select(e => e.Tag);
 
-                        context.Add(tags[i]);
-                    }
+                if (firstTags.Count() > 0)
+                    dbEntry.PostTags.Clear();
 
+                AddTagsInDb(post, tags);
+            }
+        }
 
-                    foreach (var item in tags)
-                    {
-                        context.Add(new PostTag { Post = post, Tag = item });
-                    }
+        private void AddNewPost(Post post, List<Tag> tags, string userId)
+        {
+            post.DateChanged = DateTime.Now;
+            post.UserID = userId;
 
+            context.Posts.Add(post);
 
-                }
-                context.SaveChanges();
+            AddTagsInDb(post, tags);
+        }
+
+        private void AddTagsInDb(Post post, List<Tag> tags)
+        {
+            foreach (var item in tags)
+            {
+                context.Tags.RemoveRange(this.Tags.Where(c => c.Name == item.Name));
+                context.Add(new PostTag { Post = post, Tag = item });
             }
         }
 

@@ -1,14 +1,13 @@
-﻿@using NewsSite.Domain.Entities
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model NewsSite.WebUi.Models.EditPostViewModel
+
 @{
     ViewData["Title"] = "Edit2";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-
-<link href="~/css/magicsuggest.css" rel="stylesheet" type="text/css">
-
-<h3>Редактирование поста «@Model.Post.Title»</h3>
+<h3>@Localizer["Post edit"] «@Model.Post.Title»</h3>
 
 <script>
     var tags = [];
@@ -16,44 +15,52 @@
 </script>
 
 <hr />
-<form asp-action="Edit" asp-controller="Admin" method="post" id="FormEdit">
+<form asp-action="Edit" asp-controller="Admin" enctype="multipart/form-data" method="post" id="FormEdit">
     <div class="panel-body">
         <div class="form-group">
-            <input type="hidden" asp-for="@Model.Post.PostId" />
+            <input asp-for="@Model.Post.PostId" />
+
             <div class="form-group">
                 <label asp-for="@Model.Post.Title"></label>
                 <input asp-for="@Model.Post.Title" class="form-control" />
+                <span asp-validation-for="@Model.Post.Title"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Post.Category"></label>
+                <select asp-for="@Model.Post.Category.Name"
+                        asp-items="@(new SelectList(Model.Categories,"","Name"))" class="form-control"></select>
             </div>
 
-            <select asp-for="@Model.Post.Category.Name" class="form-control">
-                @foreach (var item in Model.Categories)
-                {
-                   <option>@item.Name</option>
-                }
-            </select>
 
             <div class="form-group">
                 <label asp-for="@Model.Post.Description"></label>
-                <input asp-for="@Model.Post.Description" class="form-control" />
+                <textarea asp-for="@Model.Post.Description" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="@Model.Post.Description"></span>
             </div>
+
 
             <div class="form-group">
-                <div id="ArrTags" class="form-control"></div>
+                <label>Upload Image</label>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                            Browse… <input type="file" name="uploadedFile" id="imgInp">
+                        </span>
+                    </span>
+                    <input type="text" class="form-control" name="Post.Path" placeholder="Or paste your url">
+                </div>
+                <img id='img-upload' class="img-fluid" src="@Url.Content(Model.Post.Path)" />
             </div>
-
-            @*<input asp-for="@Model.Post.Category" class="form-control" />*@
-
-            <input type="text" id="MarkDown">
-
-
-            @*<input asp-for="@Model.Post.Text" />*@
-            <textarea asp-for="@Model.Post.Text" class="form-control" hidden></textarea>
-
-
-            @*<input type="type" name="name" value="" />*@
-
-
         </div>
+
+        <div class="form-group">
+            <div id="ArrTags" class="form-control"></div>
+        </div>
+
+        <input type="text" id="MarkDown">
+
+        <textarea asp-for="@Model.Post.Text" rows="4"></textarea>
+
     </div>
 
     <div class="panel-footer">
@@ -62,58 +69,45 @@
     </div>
 </form>
 
-
-
-@foreach (var item in Model.Post.PostTags.Select(e => e.Tag))
-{
-    <script>
+@{
+    foreach (var item in Model.Post.PostTags.Select(e => e.Tag))
+    {
+        <script>
         InitTags.push("@item.Name");
-    </script>
-}
+        </script>
+    }
 
-@foreach (var item in Model.Tags)
-{
-    <script>
+    foreach (var item in Model.Tags)
+    {
+        <script>
         tags.push("@item.Name")
-    </script>
+        </script>
+    }
 }
 
-<script src="https://code.jquery.com/jquery-3.3.1.js"
-        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-        crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
-<script src="~/js/magicsuggest.js"></script>
-<script>
-    var simplemde = new SimpleMDE({ element: document.getElementById("MarkDown") });
-    simplemde.value("@Model.Post.Text");
 
+<script>
     var instance = $('#ArrTags').magicSuggest({
         data: tags,
-        value: InitTags
+        value: InitTags,
+        placeholder: 'Write tags here'
     });
-
-    function CreateInputTag() {
-
-        for (var i = 0; i < instance.getSelection().length; i++) {
-            var elementJq = $('<input>', {
-                value: instance.getSelection()[i].name,
-                name: "tags[" + i + "].Name",
-                type: "hidden"
-
-            });
-
-            $('#FormEdit').append(elementJq);
-        }
-    }
+    var simplemde = new SimpleMDE({
+        element: document.getElementById("MarkDown"),
+        initialValue: $('#Post_Text').val(),
+        insertTexts: {
+            horizontalRule: ["", "\n\n-----\n\n"],
+            image: ["![](http://", ")"],
+            link: ["[", "](http://)"],
+            table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
+        },
+    });
 
     function SaveMarkDownText() {
         $("#Post_Text").val(simplemde.value());
 
         CreateInputTag();
-       
     }
+
 </script>
 <a onclick="SaveMarkDownText()" href="#">content</a>
-

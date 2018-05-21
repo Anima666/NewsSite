@@ -35,8 +35,8 @@ namespace NewsSite.WebUi.TagHelpers
 
             content = content.Trim('\n', '\r');
 
-            string markdown = NormalizeWhiteSpaceText(content);
-           // string markdown = (content);
+            //string markdown = NormalizeWhiteSpaceText(content);
+            string markdown = (content);
 
             var parser = MarkdownParserFactory.GetParser();
             var html = parser.Parse(markdown);

@@ -15,14 +15,13 @@
         .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
         .ToList();
 }
-<form asp-controller="Post" asp-action="SetLanguage" style="margin-top:20px;"
-      asp-route-returnUrl="@Context.Request.Path"
-      method="post" class="form-horizontal">
 
-    
+    <form asp-controller="Post" asp-action="SetLanguage" 
+          asp-route-returnUrl="@Context.Request.Path"
+          method="post" class="form-horizontal">
 
-    <select name="culture" onchange="this.form.submit();"
-            asp-for="@requestCulture.RequestCulture.UICulture.Name"
-            asp-items="cultureItems" class="dropdown-item"></select>
+        <select name="culture" onchange="this.form.submit();"
+                asp-for="@requestCulture.RequestCulture.UICulture.Name"
+                asp-items="cultureItems"></select>
 
-</form>
+    </form>

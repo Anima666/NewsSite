@@ -18,7 +18,7 @@ namespace NewsSite.Domain.Abstract
 
         // void SavePost(Post post);
         Post DeletePost(int postId);
-        void SavePost(Post post, List<Tag> tags);
+        void SavePost(Post post, List<Tag> tags, string userId);
         void AddComment(int? parentId, int postId, string UserId, string Text);
     }
 }

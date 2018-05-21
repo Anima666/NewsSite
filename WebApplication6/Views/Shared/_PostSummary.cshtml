@@ -6,24 +6,27 @@
 
 
 <div class="card mb-4">
-    <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
-    <div class="card-body">
-        <h2 class="card-title">@Model.Title</h2>
+    <div class="fill-logo">
+        <img src="@Url.Content(Model.Path)">
+        <div class="card-body">
+            <h2 class="card-title">@Model.Title</h2>
 
-        <p class="card-text">@Model.Description</p>
-        <p>
-            @foreach (var item in @Model.PostTags.Select(e => e.Tag))
-            {
-                <div class="badge badge-dark">
-                    @item.Name.ToUpper()
-                </div>
-            }
-        </p>
-        <a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId" class="btn btn-primary"> @Localizer["Read More"] &rarr; </a>
+            <p class="card-text">@Model.Description</p>
+            <p>
+                @foreach (var item in @Model.PostTags.Select(e => e.Tag))
+                {
+                    <div class="badge badge-dark">
+                        @item.Name.ToUpper()
+                    </div>
+                }
+            </p>
+            <a asp-controller="Post" asp-action="ShowPost" asp-route-Id="@Model.PostId" class="btn btn-primary"> @Localizer["Read More"] &rarr; </a>
 
-    </div>
-    <div class="card-footer text-muted">
-        @Localizer["Posted on"] @Model.DateChanged.ToString("MMMM' 'dd', 'yyyy' at 'hh':'mm' '")
-        <a href="#">Start Bootstrap</a>
+        </div>
+        <div class="card-footer text-muted">
+            @*@Localizer["Posted on"] @Model.DateChanged.ToString("MMMM' 'dd', 'yyyy' at 'hh':'mm' '")*@
+            @Localizer["Posted on"] @Model.DateChanged.ToString("f")
+            @*<a href="#">@Model.UserID</a>*@
+        </div>
     </div>
 </div>

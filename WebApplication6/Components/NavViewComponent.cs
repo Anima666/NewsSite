@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NewsSite.Domain.Abstract;
+using NewsSite.WebUi.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,20 @@ namespace NewsSite.WebUi.Components
     {
         private IPostRepository repository;
 
-        public NavTagsViewComponent (IPostRepository repo)
+        public NavTagsViewComponent(IPostRepository repo)
         {
             this.repository = repo;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            IEnumerable<string> categories = repository.Categories.Select(x => x.Name);
+            SidePanelViewModel model = new SidePanelViewModel
+            {
+                Categories = repository.Categories.OrderByDescending(n => n.Name.Length).Select(x => x.Name),
+                Posts = repository.Posts.OrderByDescending(p => p.DateChanged).Take(4),
+            };
 
-            return View(categories);
+            return View(model);
         }
     }
 }

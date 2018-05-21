@@ -1,41 +1,105 @@
-﻿.card{
-    margin-bottom:30px;
-  
+﻿.card {
+    margin-bottom: 30px;
 }
+
+.fill a {
+    color: white;
+    text-shadow: 1px 1px 1px black;
+}
+
+.fill {
+    height: 200px;
+}
+
+.fill-logo img {
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.fill img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.test2 {
+    height: 200px;
+    object-fit: fill;
+}
+
 .card-img-top {
-    height:200px;
+    height: 200px;
 }
+
 .tags {
     font-size: 16px;
     display: inline-block;
 }
+
 .card-header h1 {
-    font-size:24px;
+    font-size: 24px;
 }
-.card-header a{
-    text-decoration:none;
-    color:black;
+
+.card-header a {
+    text-decoration: none;
+    color: black;
 }
+
 .ms-sel-item {
-    padding:10px;
-    background:green;
+    padding: 10px;
+    background: green;
 }
-body{
-    padding-top:70px;
+
+.Main {
+    margin-top: 70px;
 }
-.input-validation-error{
-    background-color:red;
-    color:white;
+
+.input-validation-error {
+    background-color: red;
+    color: white;
 }
+
 #Facebook {
     background-color: #3b5998;
     color: white;
 }
+
 #Twitter {
     background-color: #00aced;
     color: white;
 }
+
 #Vkontakte {
     background-color: #45668e;
-    color:white;
+    color: white;
+}
+
+#Post_Text {
+    display: none;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+
+#img-upload {
+    width: 100%;
 }
