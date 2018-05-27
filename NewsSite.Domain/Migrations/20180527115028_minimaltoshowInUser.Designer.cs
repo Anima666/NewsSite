@@ -11,9 +11,10 @@ using System;
 namespace NewsSite.Domain.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class EFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180527115028_minimaltoshowInUser")]
+    partial class minimaltoshowInUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,6 +200,8 @@ namespace NewsSite.Domain.Migrations
 
                     b.Property<string>("Path");
 
+                    b.Property<int>("Rating");
+
                     b.Property<string>("Text")
                         .IsRequired();
 
@@ -207,8 +210,6 @@ namespace NewsSite.Domain.Migrations
                         .HasMaxLength(100);
 
                     b.Property<string>("UserId");
-
-                    b.Property<int>("ValueRating");
 
                     b.HasKey("PostId");
 
@@ -411,7 +412,7 @@ namespace NewsSite.Domain.Migrations
             modelBuilder.Entity("NewsSite.Domain.Entities.Rating", b =>
                 {
                     b.HasOne("NewsSite.Domain.Entities.Post", "Post")
-                        .WithMany("Rating2")
+                        .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade);
 

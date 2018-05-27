@@ -71,6 +71,7 @@ namespace NewsSite.Controllers
                 Image = user.UrlImage,
                 Likes = user.Likes,
                 Articles = _repository.Posts.Where(p => p.UserId == user.Id).Count(),
+                MinimalToshow = user.MinimalToShow,
             };
 
             return View(model);
@@ -128,15 +129,23 @@ namespace NewsSite.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var username = user.Email;
-            if (model.Username != username)
+            user.UserName = model.Username;
+            user.MinimalToShow = model.MinimalToshow;
+
+            var setUrlImage = await _userManager.UpdateAsync(user);
+            if (!setUrlImage.Succeeded)
             {
-                var setUSername = await _userManager.SetUserNameAsync(user, model.Username);
-                if (!setUSername.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
-                }
+                throw new ApplicationException($"Unexpected error occurred for user with ID '{user.Id}'.");
             }
+            //var username = user.Email;
+            //if (model.Username != username)
+            //{
+            //    var setUSername = await _userManager.SetUserNameAsync(user, model.Username);
+            //    if (!setUSername.Succeeded)
+            //    {
+            //        throw new ApplicationException($"Unexpected error occurred setting userName for user with ID '{user.Id}'.");
+            //    }
+            //}
 
             await SaveImage(uploadedFile, user);
 

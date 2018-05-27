@@ -10,5 +10,6 @@ namespace NewsSite.Domain.Entities
     {
         public string UrlImage { get; set; }
         public int Likes { get; set; }
+        public int MinimalToShow { get; set; }
     }
 }

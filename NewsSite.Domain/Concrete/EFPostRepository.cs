@@ -22,7 +22,7 @@ namespace NewsSite.Domain.Concrete
 
         public IEnumerable<Post> Posts
         {
-            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(c => c.Category).Include(u => u.User).ToList(); }
+            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(c => c.Category).Include(u => u.User).Include(r=>r.Rating).ToList(); }
         }
 
         public IEnumerable<Tag> Tags
@@ -109,6 +109,7 @@ namespace NewsSite.Domain.Concrete
             post.DateChanged = DateTime.Now;
             post.UserId = userId;
             post.Category = context.Categories.Where(c => c.Name == post.Category.Name).First();
+            post.ValueRating = 1;
             context.Posts.Add(post);
 
             AddTagsInDb(post, tags);
@@ -163,7 +164,7 @@ namespace NewsSite.Domain.Concrete
                 if (counRatings == 0)
                     counRatings = 1;
                     
-                post.Rating = (post.Rating + value) / (counRatings);
+                post.ValueRating = (post.ValueRating + value) / (counRatings);
                 Rating newRating = new Rating{
                     PostId = post.PostId,
                     UserId =  currentUserId,

@@ -28,14 +28,13 @@ namespace NewsSite.Domain.Entities
         public string Text { get; set; }
 
         [HiddenInput(DisplayValue = false)]
-        public int Rating { get; set; }
+        public int ValueRating { get; set; }
 
         [HiddenInput(DisplayValue = false)]
         public DateTime DateChanged { get; set; }
 
         public virtual ICollection<PostTag> PostTags { get; } = new List<PostTag>();
 
-        // public int CategoryId { get; set; }
         [Display(Name = "Categories")]
         public Category Category { get; set; }
 
@@ -44,7 +43,9 @@ namespace NewsSite.Domain.Entities
 
         public string Path { get; set; }
 
-    
+        public ICollection<Rating> Rating { get;  } = new List<Rating>();
+
+
 
     }
 }

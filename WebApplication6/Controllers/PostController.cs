@@ -50,9 +50,9 @@ namespace NewsSite.WebUi.Controllers
         [HttpPost]
         public ViewResult Search(string text = "", int page = 1) //add comment
         {
-            
+
             IEnumerable<Post> posts = repository.Posts.Where(p => p.Title.ToUpper().Contains(text.ToUpper()));
-     
+
             if (posts.Count() == 0)
             {
                 posts = repository.Posts.Where(p => p.Text.ToUpper().Contains(text.ToUpper()));
@@ -78,15 +78,19 @@ namespace NewsSite.WebUi.Controllers
             return View("List", model);
         }
 
-        public ViewResult List(string category, int page = 1)
+        public async Task<ViewResult> List(string category, int page = 1)
         {
             IEnumerable<Post> posts = repository.Posts
-                .Where(p => category == null || category == p.Category.Name)
-                .OrderByDescending(post => post.Rating);
+                .Where(p => category == null || category == p.Category.Name);
 
+            User curentUser = await GetCurrentUserAsync();
+
+            if (curentUser != null)           
+                posts = posts.Where(p => ((p.Rating.Count() > 2) & p.ValueRating >= curentUser.MinimalToShow) || (p.Rating.Count() <= 2));
+      
             PostListViewModel model = new PostListViewModel
             {
-                Posts = posts.
+                Posts = posts.OrderByDescending(post => post.ValueRating).
                 Skip((page - 1) * pageSize)
                 .Take(pageSize),
 
@@ -100,7 +104,7 @@ namespace NewsSite.WebUi.Controllers
                 CurrentCategory = category,
 
                 Ratings = repository.Ratings
-                
+
             };
             return View(model);
         }
@@ -123,11 +127,11 @@ namespace NewsSite.WebUi.Controllers
                 }
             }
 
-            var CurentUser = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
             string currentUserId = "";
 
-            if (CurentUser != null)
-                currentUserId = CurentUser.Id;
+            if (currentUser != null)
+                currentUserId = currentUser.Id;
 
             PostViewModel model = new PostViewModel
             {
@@ -138,7 +142,7 @@ namespace NewsSite.WebUi.Controllers
                 Likes = repository.Likes,
                 CurrentUserId = currentUserId,
             };
-            
+
             return View(model);
         }
 
@@ -152,15 +156,15 @@ namespace NewsSite.WebUi.Controllers
         {
             if (Text != null)
             {
-                repository.AddComment(parentId, postId, UserId, Text); 
+                repository.AddComment(parentId, postId, UserId, Text);
             }
             else
             {
                 TempData["Required field"] = "Required field";
-               
+
             }
 
-            return RedirectToAction("ShowPost", new { id = postId});
+            return RedirectToAction("ShowPost", new { id = postId });
         }
         [HttpPost]
         public async Task<JsonResult> SetRating(int id, int value)
@@ -173,7 +177,7 @@ namespace NewsSite.WebUi.Controllers
 
                 repository.SetRating(id, post, curentUser, value);
 
-                return Json(post.Rating.ToString());
+                return Json(post.ValueRating.ToString());
 
             }
 
@@ -196,6 +200,6 @@ namespace NewsSite.WebUi.Controllers
             return Json(null);
         }
 
-       
+
     }
 }

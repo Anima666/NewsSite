@@ -17,5 +17,6 @@ namespace NewsSite.WebUi.Models.ManageViewModels
 
         public int Likes { get; set; }
         public int Articles { get; set; }
+        public int MinimalToshow { get; set; }
     }
 }

@@ -12,6 +12,7 @@
     string userId = UserManager.GetUserId(User);
 }
 
+
 <div class="card mb-4">
     <div class="fill-logo">
         <img src="@Url.Content(Model.Post.Path)">
@@ -68,7 +69,7 @@
         }
         },
     readonly:true,
-        initialRating: @Model.Post.Rating,
+        initialRating: @Model.Post.ValueRating,
         });
 
 

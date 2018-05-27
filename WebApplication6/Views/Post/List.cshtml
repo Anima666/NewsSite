@@ -12,6 +12,8 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/jquery-bar-rating/jquery.barrating.js"></script>
 
+
+
 @foreach (var item in @Model.Posts)
 {
     @Html.Partial("_PostSummary", new PostSummaryViewModel { Post = item, Ratings = Model.Ratings.Where(r => r.PostId == item.PostId) })
