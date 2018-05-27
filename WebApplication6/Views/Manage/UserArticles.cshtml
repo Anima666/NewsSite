@@ -1,0 +1,64 @@
+﻿@using NewsSite.WebUi.Models.ManageViewModels
+@using NewsSite.Views.Manage
+@using Microsoft.AspNetCore.Mvc.Localization
+@model IEnumerable<NewsSite.Domain.Entities.Post>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = @Localizer["Profile"];
+    ViewData.AddActivePage(ManageNavPages.UserArticles);
+}
+
+<br />
+<p>
+    <a class="btn btn-secondary" asp-action="Create" asp-controller="Admin">@Localizer["Create New"]</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">@Localizer["Picture"]</th>
+            <th scope="col">
+                @Localizer["Username"]
+            </th>
+            <th scope="col">
+                @Localizer["Title"]
+            </th>
+            <th scope="col">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+     
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td scope="row">
+                        <img src="@Url.Content(@item.Path)" class="imageArticle" />
+                    </td>
+                    <td scope="row">
+                        @item.User.UserName
+                    </td>
+                    <td scope="row">
+                        <a asp-action="ShowPost" asp-controller="Post" asp-route-id="@item.PostId">@item.Title</a>
+                    </td>
+                    <td scope="row">
+                        <div class="articlesBtn">
+                            @using (Html.BeginForm("Delete", "Admin"))
+                            {
+                                <a class="btn btn-sm btn-primary" asp-action="Edit" asp-controller="Admin" asp-route-PostId="@item.PostId">@Localizer["Edit"]</a>
+                                @Html.Hidden("PostId", item.PostId)
+                                <input type="submit"
+                                       class="btn btn-sm btn-danger"
+                                       value="@Localizer["Delete"]" />
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+   
+    </tbody>
+</table>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

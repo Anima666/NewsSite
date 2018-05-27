@@ -1,0 +1,56 @@
+﻿@using NewsSite.WebUi.Models.ManageViewModels
+@using NewsSite.Views.Manage
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model IndexViewModel
+
+@{
+    ViewData["Title"] = @Localizer["Profile"];
+    ViewData.AddActivePage(ManageNavPages.Index);
+}
+
+@Html.Partial("_StatusMessage", Model.StatusMessage)
+<form method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-6">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Username"></label>
+                <input asp-for="Username" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success">@Localizer["Save"]</button>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+            </div>
+            <div class="form-group">
+                <label>Upload Image</label>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                            @Localizer["Browse"] <input type="file" name="uploadedFile" id="imgInp">
+                        </span>
+                    </span>
+                    <input type="text" class="form-control" readonly placeholder="upload image">
+                </div>
+                <img id='img-upload' class="img-fluid" src="@Url.Content(Model.Image)" />
+                <div class="form-group">
+                    <div class="stats">
+                        <i class="fa fa-newspaper-o fa-2x "> </i> @Model.Articles
+
+                        <i class="fa fa-heart fa-2x "></i> @Model.Likes
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -9,5 +9,6 @@ namespace NewsSite.Domain.Entities
     public class User:IdentityUser
     {
         public string UrlImage { get; set; }
+        public int Likes { get; set; }
     }
 }

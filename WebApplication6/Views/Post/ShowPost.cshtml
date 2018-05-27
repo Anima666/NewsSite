@@ -1,14 +1,17 @@
 ﻿@using NewsSite.WebUi.HtmlHelpers;
+@using NewsSite.WebUi.ViewModel;
+@using NewsSite.Domain.Entities;
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @model NewsSite.WebUi.Models.PostViewModel
-<!--To Work with icons-->
-<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
 
 @{
     ViewData["Title"] = "ShowPost";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <div>
     <!-- Title -->
@@ -16,21 +19,24 @@
 
     <!-- Author -->
     <p class="lead">
-        @Localizer["Posted on"]
+        @Localizer["by"]
         <a href="#">@Model.User.UserName</a>
+        <i class="fa fa-heart-o"></i>
+        <span>@Model.User.Likes</span>
     </p>
 
     <hr>
-
-    <!-- Date/Time -->
-    @*<p>Posted on January 1, 2018 at 12:00 PM</p>*@
-    <p>@Localizer["Posted on"] @Model.Post.DateChanged.ToString("f") </p>
-
-    <div>
-        <a asp-controller="Admin" asp-action="Edit" asp-route-PostId="@Model.Post.PostId">Edit</a> |
-        <a asp-action="List">Back to List</a>
+    <div class="float-right">
+        @if (Model.CurrentUserId == Model.Post.UserId || User.IsInRole("admin"))
+        {
+            <a asp-controller="Admin" asp-action="Edit" asp-route-PostId="@Model.Post.PostId"> @Localizer["Edit"]</a>
+        }
     </div>
+    <!-- Date/Time -->
+    <p>
+        @Localizer["Posted on"] @Model.Post.DateChanged.ToString("f")
 
+    </p>
     <hr>
 
     <!-- Preview Image -->
@@ -43,147 +49,160 @@
 
     <hr>
 
+    @if (TempData["Required field"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["Required field"]
+        </div>
+    }
+
+
+    <select id="example" data-id="@Model.Post.PostId">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+
     <!-- Comments Form -->
     <div class="card my-4">
         <h5 class="card-header">@Localizer["Leave a Comment:"]</h5>
         <div class="card-body">
-            <form asp-controller="Post" asp-action="AddComment" method="post">
-                <input hidden="true" name="postId" value="@Model.Post.PostId" />
-                <input hidden="true" name="UserId" value="@Model.CurrentUserId" />
-                @*<input name="parentId" value="@Model.Comments." />*@
+            <form asp-controller="Post" asp-action="AddComment"
+                  asp-route-postId="@Model.Post.PostId" asp-route-UserId="@Model.CurrentUserId"
+                  method="post">
                 <div class="form-group">
                     <textarea name="Text" class="form-control" rows="3"></textarea>
                 </div>
                 @if (User.Identity.IsAuthenticated)
                 {
-                <button type="submit" class="btn btn-primary">@Localizer["Submit"]</button>
-
+                    <button type="submit" class="btn btn-primary">@Localizer["Submit"]</button>
                 }
                 else
                 {
-                    <p>чтобы оставить комментраий нужно авторизоваться</p>
-
+                    <p>@Localizer["Please auth for  whtie comment"]</p>
                 }
             </form>
         </div>
     </div>
 
 
-
     @foreach (var item in Model.Comments.Where(c => c.ParentId == null))
     {
-        @*<div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <img src="https://image.ibb.co/jw55Ex/def_face.jpg" class="img img-rounded img-fluid" />
-                            <p class="text-secondary text-center">@item.PostedTime.ToShortTimeString()</p>
-                        </div>
-                        <div class="col-md-10">
-                            <p>
-                                <a class="float-left" href="https://maniruzzaman-akash.blogspot.com/p/contact.html"><strong>@Model.Users.Where(u => u.Id == item.UserID).First().UserName</strong></a>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                            </p>
-                            <div class="clearfix"></div>
-                            <p>@item.Text</p>
-                            <p>
-                                <a class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i> Reply</a>
-                                <a class="float-right btn text-white btn-danger"> <i class="fa fa-heart"></i> Like</a>
-                            </p>
-                        </div>
+
+        User commentUser = @Model.Users.Where(u => u.Id == item.UserId).First();
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-2 col-lg-2">
+                        <img src="@Url.Content(commentUser.UrlImage)" class="fill2" />
+
+                        <p class="text-secondary text-center"> @item.PostedTime.ToShortTimeString()</p>
                     </div>
+                    <div class="col-sm-10 col-lg-10">
+                        <p>
+                            <a class="float-left" asp-action="Index" asp-controller="Manage"><strong>@commentUser.UserName</strong></a>
+                            <span class="float-right">
+                                @if (!User.Identity.IsAuthenticated)
+                                {
+                                    <i class="fa fa-heart-o"></i><span>@item.LikeCount</span>
+                                }
+                                else
+                                {
+                                    if (Model.Likes.Where(x => x.UserId == Model.CurrentUserId & x.CommentId == item.Id).FirstOrDefault() == null)
+                                    {
+                                        <a class="like" id="like-@item.Id" onclick="like(@item.Id)">
+                                            <i class="fa fa-heart-o "></i>
+                                            <span>@item.LikeCount</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-heart"></i>
+                                        <span>@item.LikeCount</span>
 
-                </div>
-            </div>*@
-
-
-        <!-- Single Comment -->
-        <div class="media mb-4">
-            @if (item.UserID != null) //поменять
-            {
-                <img class="d-flex mr-3 rounded-circle" src="@Model.Users.Where(u => u.Id == item.UserID).First().UrlImage" width="50">
-            }
-
-            <div class="media-body">
-                <h5 class="mt-0">@Model.Users.Where(u => u.Id == item.UserID).First().UserName</h5>
-                @item.Text
-                @if (item.PostedTime != null)
-                {
-                    <p>@item.PostedTime</p>
-                }
-
-                    <a onclick="ShowCommentInput('@item.Id')">@Localizer["Reply"]</a>
-
-                @Html.CreateComments(item, Model)
-
-                <!-- Comments Form -->
-                <div class="card my-4" id="@item.Id" style="display:none;">
-                    <h5 class="card-header">Leave a Comment:</h5>
-                    <div class="card-body">
-                        <form asp-controller="Post" asp-action="AddComment" method="post">
-                            <input name="postId" value="@item.Post.PostId" />
-                            <input name="parentId" value="@item.Id" />
-                            <input name="UserdId" value="@Model.CurrentUserId" />
-                            <div class="form-group">
-                                <textarea name="Text" class="form-control" rows="2"></textarea>
-                            </div>
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                            <button type="submit" class="btn btn-primary">@Localizer["Submit"]</button>
-
-                            }
-                            else
-                            {
-                                <p>чтобы оставить комментраий нужно авторизоваться</p>
-
-                            }
-
-
-                        </form>
+                                    }
+                                }
+                            </span>
+                        </p>
+                        <div class="clearfix"></div>
+                        <p>@item.Text</p>
+                        <p>
+                            <a class="float-right btn-sm btn btn-outline-primary ml-2" onclick="ShowCommentInput(@item.Id)"> <i class="fa fa-reply"></i> Reply</a>
+                        </p>
                     </div>
                 </div>
+                @Html.CreateComments(item, @Model)
+            </div>
+        </div>
 
+        <div class="card my-4" id="@item.Id" style="display:none;">
+            <h5 class="card-header">Leave a Comment:</h5>
+            <div class="card-body">
+                <form asp-controller="Post" asp-action="AddComment" method="post">
+                    <input name="postId" value="@item.Post.PostId" />
+                    <input name="parentId" value="@item.Id" />
+                    <input name="UserId" value="@Model.CurrentUserId" />
+                    <div class="form-group">
+                        <textarea name="Text" class="form-control" rows="2"></textarea>
+                    </div>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <button type="submit" class="btn btn-primary">@Localizer["Submit"]</button>
+                    }
+                    else
+                    {
+                        <p>@Localizer["Please auth for  whtie comment"]</p>
+                    }
+                </form>
             </div>
         </div>
     }
-
-    <!-- Comment with nested comments -->
-    @*<div class="media mb-4">
-            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-            <div class="media-body">
-                <h5 class="mt-0">Commenter Name</h5>
-                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-
-                <div class="media mt-4">
-                    <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                    <div class="media-body">
-                        <h5 class="mt-0">Commenter Name</h5>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                    </div>
-                </div>
-
-                <div class="media mt-4">
-                    <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                    <div class="media-body">
-                        <h5 class="mt-0">Commenter Name</h5>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                    </div>
-                </div>
-
-            </div>
-        </div>*@
-
 </div>
 
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="~/lib/jquery-bar-rating/jquery.barrating.js"></script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $('#example').barrating({
+            theme: 'bars-reversed',
+            onSelect: function (value, text, event) {
+                if (typeof (event) !== 'undefined') {
+                    var id = $('#example').data("id");
+                    $.post("/Post/SetRating", { id : parseInt(id), value : value }, function (data) {
+                        $('#example').barrating('readonly', true);
+                        $('select').barrating('set', data);
+                    });
+
+                }
+            },
+            initialRating: @Model.Post.Rating
+        });
+    });
+</script>
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+        $('#example').barrating('readonly', false);
+    </script>
+}
+else
+{
+    <script>
+        $('#example').barrating('readonly', true);
+    </script>
+
+}
 <script>
     function ShowCommentInput(id) {
-        $("#" + id).show();
+        $("#" + id).toggle();
     }
+
+
 </script>
-
-
-
-

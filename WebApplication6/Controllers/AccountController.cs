@@ -45,9 +45,9 @@ namespace NewsSite.WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-                //  User user = new User { Email = model.Email, UserName = model.Email, Year = model.Year };
-                var user = new User { UserName = model.Email, Email = model.Email };
-                // добавляем пользователя
+                string urlImage = "https://ssl.gstatic.com/accounts/ui/avatar_2x.png";
+                var user = new User { UserName = model.Email, Email = model.Email , UrlImage= urlImage};
+  
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -62,8 +62,6 @@ namespace NewsSite.WebUi.Controllers
                     await emailService.SendEmailAsync(model.Email, "Confirm your account",
                         $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
 
-                    // установка куки
-                    //await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("List", "Post");
                 }
                 else
@@ -87,11 +85,9 @@ namespace NewsSite.WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var user = await _userManager.FindByNameAsync(model.Email);
                 if (user != null)
                 {
-                    // проверяем, подтвержден ли email
                     if (!await _userManager.IsEmailConfirmedAsync(user))
                     {
                         ModelState.AddModelError(string.Empty, "Вы не подтвердили свой email");
@@ -99,12 +95,10 @@ namespace NewsSite.WebUi.Controllers
                     }
                 }
 
-
                 var result =
                     await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    // проверяем, принадлежит ли URL приложению
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         return Redirect(model.ReturnUrl);
@@ -126,7 +120,6 @@ namespace NewsSite.WebUi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
-            // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
             return RedirectToAction("List", "Post");
         }
@@ -137,7 +130,7 @@ namespace NewsSite.WebUi.Controllers
         {
             if (userId == null || code == null)
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("List", "Post");
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -153,7 +146,6 @@ namespace NewsSite.WebUi.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
-            // Request a redirect to the external login provider.
             var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
@@ -175,8 +167,6 @@ namespace NewsSite.WebUi.Controllers
             {
                 return RedirectToAction(nameof(Login));
             }
-
-            // Sign in the user with this external login provider if the user already has a login.
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
@@ -189,45 +179,43 @@ namespace NewsSite.WebUi.Controllers
             }
             else
             {
-                // If the user does not have an account, then ask the user to create an account.
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 var username = info.Principal.FindFirstValue(ClaimTypes.GivenName);
 
-                string thumbnailUrl = null;
+                string thumbnailUrl = "https://ssl.gstatic.com/accounts/ui/avatar_2x.png";
                 string nameIdentifier = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (info.LoginProvider == "Facebook")
-                {             
+                {
                     thumbnailUrl = string.Format("https://graph.facebook.com/{0}/picture?type=large", nameIdentifier);
                 }
 
                 ExternalLoginViewModel model = new ExternalLoginViewModel { Email = email, UserName = username, UrlImage = thumbnailUrl };
-               
-      
-                    var user = new User { UserName = model.UserName, Email = model.Email, UrlImage = model.UrlImage };
-                    var result1 = await _userManager.CreateAsync(user);
-                    if (result1.Succeeded)
+
+                var user = new User { UserName = model.UserName, Email = model.Email, UrlImage = model.UrlImage };
+                var resultUser = await _userManager.CreateAsync(user);
+                if (resultUser.Succeeded)
+                {
+                    resultUser = await _userManager.AddLoginAsync(user, info);
+                    if (resultUser.Succeeded)
                     {
-                        result1 = await _userManager.AddLoginAsync(user, info);
-                        if (result1.Succeeded)
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-                            return RedirectToLocal(returnUrl);
-                        }
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                        return RedirectToLocal(returnUrl);
                     }
-                    AddErrors(result1);
-              
+                }
+                AddErrors(resultUser);
+
 
                 ViewData["ReturnUrl"] = returnUrl;
-                return View(nameof(ExternalLogin), model);
+
+                //return View(nameof(ExternalLogin), model);
+
+                return RedirectToAction("List", "Post");
 
 
-                // await ExternalLoginConfirmation(new ExternalLoginViewModel { Email = email, UserName = username, UrlImage = thumbnailUrl });
-
-                //return RedirectToAction("ExternalLoginConfirmation", new ExternalLoginViewModel { Email = email , UserName = username, UrlImage = thumbnailUrl });
             }
         }
 
@@ -238,7 +226,6 @@ namespace NewsSite.WebUi.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Get the information about the user from the external login provider
                 var info = await _signInManager.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
@@ -279,7 +266,7 @@ namespace NewsSite.WebUi.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("List", "Post");
             }
         }
 

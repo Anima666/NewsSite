@@ -3,7 +3,7 @@
 @model NewsSite.WebUi.Models.EditPostViewModel
 
 @{
-    ViewData["Title"] = "Edit2";
+    ViewData["Title"] = @Localizer["Post edit"];
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -31,23 +31,21 @@
                         asp-items="@(new SelectList(Model.Categories,"","Name"))" class="form-control"></select>
             </div>
 
-
             <div class="form-group">
                 <label asp-for="@Model.Post.Description"></label>
                 <textarea asp-for="@Model.Post.Description" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="@Model.Post.Description"></span>
             </div>
 
-
             <div class="form-group">
                 <label>Upload Image</label>
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse… <input type="file" name="uploadedFile" id="imgInp">
+                            @Localizer["Browse"] <input type="file" name="uploadedFile" id="imgInp">
                         </span>
                     </span>
-                    <input type="text" class="form-control" name="Post.Path" placeholder="Or paste your url">
+                    <input type="text" class="form-control" name="Post.Path" placeholder="@Localizer["Or paste your url"]">
                 </div>
                 <img id='img-upload' class="img-fluid" src="@Url.Content(Model.Post.Path)" />
             </div>
@@ -60,14 +58,16 @@
         <input type="text" id="MarkDown">
 
         <textarea asp-for="@Model.Post.Text" rows="4"></textarea>
+        <span asp-validation-for="@Model.Post.Text"></span>
 
     </div>
 
     <div class="panel-footer">
-        <input type="submit" value="Сохранить" class="btn btn-success" onclick="SaveMarkDownText()" />
-        <a asp-controller="Post" asp-action="List" class="btn btn-secondary">Отменить</a>
+        <input type="submit" value="@Localizer["Save"]" class="btn btn-success" onclick="SaveMarkDownText()" />
+        <a asp-controller="Post" asp-action="List" class="btn btn-secondary">@Localizer["Cancel"]</a>
     </div>
 </form>
+
 
 @{
     foreach (var item in Model.Post.PostTags.Select(e => e.Tag))
@@ -90,7 +90,7 @@
     var instance = $('#ArrTags').magicSuggest({
         data: tags,
         value: InitTags,
-        placeholder: 'Write tags here'
+        placeholder: '@Localizer["Write tags here"]'
     });
     var simplemde = new SimpleMDE({
         element: document.getElementById("MarkDown"),
@@ -102,12 +102,4 @@
             table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
         },
     });
-
-    function SaveMarkDownText() {
-        $("#Post_Text").val(simplemde.value());
-
-        CreateInputTag();
-    }
-
 </script>
-<a onclick="SaveMarkDownText()" href="#">content</a>

@@ -1,12 +1,13 @@
 ﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
-    @{
-        ViewData["Title"] = "Index";
-        Layout = "~/Views/Shared/_Layout.cshtml";
-    }
-    <h2>Список ролей</h2>
-    <table class="table">
-        @foreach (var role in Model)
-        {
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Список ролей</h2>
+<table class="table">
+    @foreach (var role in Model)
+    {
         <tr>
             <td>@role.Name</td>
             <td>
@@ -17,7 +18,8 @@
                 </form>
             </td>
         </tr>
-        }
-    </table>
-    <a asp-action="Create">Добавить роль</a>
-    <a asp-action="UserList">Список пользователей</a>
+    }
+</table>
+<a asp-action="Create">Добавить роль</a>
+<a asp-controller="Users" asp-action="Index">Список пользователей</a>
+<a asp-controller="Admin" asp-action="Index">Список всех статей</a>

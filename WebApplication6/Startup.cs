@@ -37,7 +37,6 @@ namespace WebApplication6
         {
             string connection = Configuration.GetConnectionString("TestAuth");
             services.AddDbContext<LocalizationContext>(options => options.UseSqlServer(connection));
-            //  services.AddDbContext<EFDbContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IPostRepository, EFPostRepository>();
             services.AddTransient<IStringLocalizer, EFStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory>(new EFStringLocalizerFactory(connection));
@@ -69,12 +68,11 @@ namespace WebApplication6
               {
                   options.ConsumerKey = "lRUbVkZ4gFBXUJ8n0q7Qj0eFV";
                   options.ConsumerSecret = "TgUvk9OyhhaWyJIGazRW1N6EDdDXl273MyuSkaCi5JhUQ5UPCP";
-                  // options.
               })
               .AddVkontakte(options =>
               {
-                  options.ClientId = "5886707";
-                  options.ClientSecret = "a9LgfX0W96138GYTq9uh";
+                  options.ClientId = "6475339";
+                  options.ClientSecret = "vdu1OTQMRavA3Z8Fbdfk";
                   options.Scope.Add("email");
 
               });
@@ -103,7 +101,6 @@ namespace WebApplication6
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
@@ -122,36 +119,8 @@ namespace WebApplication6
             app.UseAuthentication();
             app.UseStaticFiles();
 
-            //app.UseMarkdown();
-
             app.UseMvc(routes =>
             {
-                //routes.MapRoute(
-                //    name: "default",
-                //    template: "{controller=Home}/{action=Index}/{id?}");
-
-                //   routes.MapRoute(null,
-                //    "",
-                //    new
-                //    {
-                //        controller = "Post",
-                //        action = "List",
-                //        tag = (string)null,
-                //        page = 1
-                //    }
-                //);
-
-                //   routes.MapRoute(
-                //       name: null,
-                //       template: "Page{page}",
-                //       defaults: new { controller = "Post", action = "List", tag = (string)null },
-                //       constraints: new { page = @"\d+" }
-                //   );
-
-                //   routes.MapRoute(null,
-                //       "{tag}",
-                //       new { controller = "Post", action = "List", page = 1 }
-                //   );
                 routes.MapRoute(
              name: null,
              template: "{controller=Post}/{action=ShowPost}/{id?}"
@@ -169,7 +138,7 @@ namespace WebApplication6
 
                 routes.MapRoute(
                 name: "Default",
-                template: "{controller}/{action}/{id?}",
+                template: "{controller}/{action}",
                 defaults: new { controller = "Post", action = "List" });
             });
         }

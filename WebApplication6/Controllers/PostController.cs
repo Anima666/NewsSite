@@ -50,11 +50,13 @@ namespace NewsSite.WebUi.Controllers
         [HttpPost]
         public ViewResult Search(string text = "", int page = 1) //add comment
         {
+            
             IEnumerable<Post> posts = repository.Posts.Where(p => p.Title.ToUpper().Contains(text.ToUpper()));
-
+     
             if (posts.Count() == 0)
             {
                 posts = repository.Posts.Where(p => p.Text.ToUpper().Contains(text.ToUpper()));
+
             }
 
             PostListViewModel model = new PostListViewModel
@@ -71,6 +73,7 @@ namespace NewsSite.WebUi.Controllers
                     TotalItems = posts.Count(),
 
                 },
+                Ratings = repository.Ratings
             };
             return View("List", model);
         }
@@ -79,8 +82,7 @@ namespace NewsSite.WebUi.Controllers
         {
             IEnumerable<Post> posts = repository.Posts
                 .Where(p => category == null || category == p.Category.Name)
-                .OrderByDescending(post => post.DateChanged);
-
+                .OrderByDescending(post => post.Rating);
 
             PostListViewModel model = new PostListViewModel
             {
@@ -95,7 +97,10 @@ namespace NewsSite.WebUi.Controllers
                     TotalItems = posts.Count()
 
                 },
-                CurrentCategory = category
+                CurrentCategory = category,
+
+                Ratings = repository.Ratings
+                
             };
             return View(model);
         }
@@ -103,10 +108,14 @@ namespace NewsSite.WebUi.Controllers
         public async Task<IActionResult> ShowPost(int id = 1)
         {
             Post post = repository.Posts.Where(p => p.PostId == id).FirstOrDefault();
-            User user=null;
+
+            if (post == null)
+                return NotFound();
+
+            User user = null;
             if (post != null)
             {
-                user = await _userManager.FindByIdAsync(post.UserID);
+                user = await _userManager.FindByIdAsync(post.UserId);
 
                 if (user == null)
                 {
@@ -126,9 +135,10 @@ namespace NewsSite.WebUi.Controllers
                 Comments = repository.Comments.Where(c => c.PostId == id),
                 User = user,
                 Users = _userManager.Users,
+                Likes = repository.Likes,
                 CurrentUserId = currentUserId,
             };
-
+            
             return View(model);
         }
 
@@ -140,12 +150,52 @@ namespace NewsSite.WebUi.Controllers
         [HttpPost]
         public ActionResult AddComment(int? parentId, int postId, string UserId, string Text)
         {
+            if (Text != null)
+            {
+                repository.AddComment(parentId, postId, UserId, Text); 
+            }
+            else
+            {
+                TempData["Required field"] = "Required field";
+               
+            }
 
-            repository.AddComment(parentId, postId, UserId, Text); //add validation
+            return RedirectToAction("ShowPost", new { id = postId});
+        }
+        [HttpPost]
+        public async Task<JsonResult> SetRating(int id, int value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                Post post = repository.Posts.Where(x => x.PostId == id).First();
 
-            return RedirectToAction("ShowPost");
+                var curentUser = await GetCurrentUserAsync();
+
+                repository.SetRating(id, post, curentUser, value);
+
+                return Json(post.Rating.ToString());
+
+            }
+
+            return Json(null);
         }
 
+        [HttpPost]
+        public async Task<JsonResult> LikeThis(int id)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                Comment comment = repository.Comments.Where(x => x.Id == id).First();
 
+                var curentUser = await GetCurrentUserAsync();
+                repository.SetLike(id, comment, curentUser);
+
+                return Json(comment.LikeCount.ToString());
+            }
+
+            return Json(null);
+        }
+
+       
     }
 }

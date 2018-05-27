@@ -13,7 +13,7 @@ namespace NewsSite.Domain.Concrete
 {
     public class EFPostRepository : IPostRepository
     {
-  
+
         private ApplicationContext context;
         public EFPostRepository(ApplicationContext context)
         {
@@ -22,7 +22,7 @@ namespace NewsSite.Domain.Concrete
 
         public IEnumerable<Post> Posts
         {
-            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(c => c.Category).ToList(); }
+            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(c => c.Category).Include(u => u.User).ToList(); }
         }
 
         public IEnumerable<Tag> Tags
@@ -38,6 +38,14 @@ namespace NewsSite.Domain.Concrete
         public IEnumerable<User> Users
         {
             get { return context.Users; }
+        }
+        public IEnumerable<Like> Likes
+        {
+            get { return context.Likes; }
+        }
+        public IEnumerable<Rating> Ratings
+        {
+            get { return context.Ratings ; }
         }
 
         public IEnumerable<Comment> Comments
@@ -99,8 +107,8 @@ namespace NewsSite.Domain.Concrete
         private void AddNewPost(Post post, List<Tag> tags, string userId)
         {
             post.DateChanged = DateTime.Now;
-            post.UserID = userId;
-
+            post.UserId = userId;
+            post.Category = context.Categories.Where(c => c.Name == post.Category.Name).First();
             context.Posts.Add(post);
 
             AddTagsInDb(post, tags);
@@ -110,7 +118,9 @@ namespace NewsSite.Domain.Concrete
         {
             foreach (var item in tags)
             {
-                context.Tags.RemoveRange(this.Tags.Where(c => c.Name == item.Name));
+                Tag removeTag = context.Tags.Where(c => c.Name == item.Name).FirstOrDefault();
+                if (removeTag != null)
+                    context.Tags.Remove(removeTag);
                 context.Add(new PostTag { Post = post, Tag = item });
             }
         }
@@ -122,11 +132,68 @@ namespace NewsSite.Domain.Concrete
                 ParentId = parentId,
                 PostId = postId,
                 Text = Text,
-                UserID = UserId,
+                UserId = UserId,
                 PostedTime = DateTime.Now,
             };
             context.Comments.Add(Comment);
             context.SaveChanges();
+        }
+
+        public bool CheckUserPressRatings(User CurentUser, Post post)
+        {
+            Rating rating = context.Ratings.Where(x => x.UserId == CurentUser.Id & x.PostId == post.PostId).FirstOrDefault();
+
+            if (rating == null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void SetRating(int id, Post post, User CurentUser, int value)
+        {
+            string currentUserId = CurentUser.Id;
+            Rating rating = context.Ratings.Where(x => x.UserId == CurentUser.Id & x.PostId == post.PostId).FirstOrDefault();
+
+            if (rating == null)
+            {
+                int counRatings = context.Ratings.Where(x => x.PostId == post.PostId).Count()+1;
+
+                if (counRatings == 0)
+                    counRatings = 1;
+                    
+                post.Rating = (post.Rating + value) / (counRatings);
+                Rating newRating = new Rating{
+                    PostId = post.PostId,
+                    UserId =  currentUserId,
+                };
+
+                context.Add(newRating);
+                context.SaveChanges();
+            }
+           
+        }
+        public void SetLike(int id, Comment comment, User CurentUser)
+        {
+            string currentUserId = CurentUser.Id;
+            Like like = context.Likes.Where(x => x.UserId == CurentUser.Id & x.CommentId == comment.Id).FirstOrDefault();
+
+            if (like == null)
+            {
+                comment.LikeCount++;
+
+                User commentUser = context.Users.Where(u => u.Id == comment.UserId).FirstOrDefault();
+
+                commentUser.Likes++;
+
+                Like newLike = new Like();
+                newLike.CommentId = id;
+                newLike.UserId = currentUserId;
+
+                context.Add(newLike);
+                context.SaveChanges();
+            }
         }
     }
 }

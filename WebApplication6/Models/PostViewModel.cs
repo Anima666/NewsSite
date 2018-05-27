@@ -12,6 +12,7 @@ namespace NewsSite.WebUi.Models
         public IEnumerable<Comment> Comments { get; set; }
         public IEnumerable<User> Users { get; set; }
         public User User { get; set; }
+        public IEnumerable<Like> Likes { get; set; }
 
         public string CurrentUserId { get; set; }
       

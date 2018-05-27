@@ -145,21 +145,43 @@ namespace NewsSite.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("LikeCount");
+
                     b.Property<int?>("ParentId");
 
                     b.Property<int>("PostId");
 
+                    b.Property<DateTime>("PostedTime");
+
                     b.Property<string>("Text");
 
-                    b.Property<string>("UserID");
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("UserID");
-
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("NewsSite.Domain.Entities.Like", b =>
+                {
+                    b.Property<int>("LikeId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("CommentId");
+
+                    b.Property<bool>("Liked");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("LikeId");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("NewsSite.Domain.Entities.Post", b =>
@@ -172,22 +194,27 @@ namespace NewsSite.Domain.Migrations
                     b.Property<DateTime>("DateChanged");
 
                     b.Property<string>("Description")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<string>("Path");
 
                     b.Property<int>("Rating");
 
-                    b.Property<string>("Text");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Text")
                         .IsRequired();
 
-                    b.Property<string>("UserID");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("UserId");
 
                     b.HasKey("PostId");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Posts");
                 });
@@ -203,6 +230,24 @@ namespace NewsSite.Domain.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("PostTag");
+                });
+
+            modelBuilder.Entity("NewsSite.Domain.Entities.Rating", b =>
+                {
+                    b.Property<int>("RatingId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("PostId");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("RatingId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("NewsSite.Domain.Entities.Tag", b =>
@@ -231,6 +276,8 @@ namespace NewsSite.Domain.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
+
+                    b.Property<int>("Likes");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -321,10 +368,18 @@ namespace NewsSite.Domain.Migrations
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NewsSite.Domain.Entities.Like", b =>
+                {
+                    b.HasOne("NewsSite.Domain.Entities.Comment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("NewsSite.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("NewsSite.Domain.Entities.Post", b =>
@@ -335,7 +390,7 @@ namespace NewsSite.Domain.Migrations
 
                     b.HasOne("NewsSite.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("NewsSite.Domain.Entities.PostTag", b =>
@@ -349,6 +404,18 @@ namespace NewsSite.Domain.Migrations
                         .WithMany("PostTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NewsSite.Domain.Entities.Rating", b =>
+                {
+                    b.HasOne("NewsSite.Domain.Entities.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("NewsSite.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

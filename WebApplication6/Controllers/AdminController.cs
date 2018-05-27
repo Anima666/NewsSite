@@ -15,7 +15,8 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace NewsSite.WebUi.Controllers
 {
-    // [Authorize(Roles = "admin")]
+    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, writer")]
     public class AdminController : Controller
     {
         private IPostRepository repository;
@@ -28,7 +29,7 @@ namespace NewsSite.WebUi.Controllers
             _userManager = userManager;
             _appEnvironment = appEnvironment;
         }
-
+        [Authorize(Roles = "admin")]
         public ViewResult Index()
         {
             return View(repository.Posts);
@@ -45,7 +46,7 @@ namespace NewsSite.WebUi.Controllers
             };
             return View("Edit", model);
         }
-
+      //  [Authorize(Roles = "writer")]
         public ViewResult Edit(int postId)
         {
 
@@ -65,16 +66,17 @@ namespace NewsSite.WebUi.Controllers
         [HttpPost]
         public ActionResult Delete(int PostId)
         {
-            Post deletedGame = repository.DeletePost(PostId);
-            if (deletedGame != null)
+            Post deletedPost = repository.DeletePost(PostId);
+            if (deletedPost != null)
             {
                 TempData["message"] = string.Format("Post \"{0}\" была удалена",
-                    deletedGame.Title);
+                    deletedPost.Title);
             }
 
             return RedirectToAction("Index");
         }
 
+     //   [Authorize(Roles = "writer")]
         [HttpPost]
         public async Task<ActionResult> Edit(Post post, List<Tag> tags, IFormFile uploadedFile)
         {
@@ -89,13 +91,13 @@ namespace NewsSite.WebUi.Controllers
                 TempData["message"] = string.Format("Изменения в посту \"{0}\" были сохранены", post.Title);
 
 
-                return RedirectToAction("Index");
+                return RedirectToAction("List","Post");
             }
             else
             {
-                Post post2 = repository.Posts.First(p => p.PostId == post.PostId);
+               // Post post2 = repository.Posts.First(p => p.PostId == post.PostId);
 
-                EditPostViewModel model = GetEditPostViewModel(post2);
+                EditPostViewModel model = GetEditPostViewModel(post);
                 // Что-то не так со значениями данных
                 return View(model);
             }

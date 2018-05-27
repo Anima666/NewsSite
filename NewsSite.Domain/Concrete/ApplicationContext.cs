@@ -7,7 +7,7 @@ using System.Text;
 
 namespace NewsSite.Domain.Concrete
 {
-    public class ApplicationContext: IdentityDbContext<User>
+    public class ApplicationContext : IdentityDbContext<User>
     {
 
         public DbSet<Post> Posts { get; set; }
@@ -15,7 +15,9 @@ namespace NewsSite.Domain.Concrete
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<Comment> Comments { get; set; }
-  
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
@@ -28,6 +30,8 @@ namespace NewsSite.Domain.Concrete
 
             modelBuilder.Entity<PostTag>()
                 .HasKey(t => new { t.PostId, t.TagId });
+
+           
         }
     }
 }

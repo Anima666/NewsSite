@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
+
 namespace NewsSite.WebUi.HtmlHelpers
 {
     public static class CommentsHelper
@@ -18,7 +19,8 @@ namespace NewsSite.WebUi.HtmlHelpers
             var sb = new StringBuilder();
 
             if (model.Comments.Count() > 0)
-            {        
+            {
+
                 foreach (var item in model.Comments.Where(c => c.ParentId == comment.Id & c.Id != comment.Id))
                 {
                     GetComment(html, model, sb, item);
@@ -29,47 +31,89 @@ namespace NewsSite.WebUi.HtmlHelpers
 
         private static void GetComment(IHtmlHelper html, PostViewModel model, StringBuilder sb, Comment item)
         {
-            string url = "http://placehold.it/50x50";
-            User user = new User();
-            user.UserName = "NoName";
-            if (item.UserID != null)
-            {              
-                user = model.Users.Where(u => u.Id == item.UserID).First();
-                url = user.UrlImage;
+     
+            if (item.UserId != null)
+            {
+                User user = model.Users.Where(u => u.Id == item.UserId).First();
+                string url = user.UrlImage;
+
+                sb.AppendFormat("<div class='card card-inner'>" +
+               "<div class='card-sub'>" +
+               "<div class='card-body'>" +
+               "<div class='row'>" +
+               "<div class='сol-sm-2 col-lg-2'>" +
+               "<img src = '{5}' class='fill2' />" +
+               "<p class='text-secondary text-center'>{0}</p></div>" +
+               "<div class='col-sm-10 col-lg-10'>" +
+               "<p>" +
+               "<a class='float-left'><strong>{1}</strong></a>" +
+               "<span class='float-right'>" + GetIconLike(item, model) +
+               "</span>" +
+               "</p>" +
+               "<div class='clearfix'></div>" +
+               "<p>{2}</p>" +
+               "<p>" +
+               "<a class='float-right btn-sm btn btn-outline-primary ml-2' onclick='ShowCommentInput({4})'> <i class='fa fa-reply'></i> Reply</a>" +
+
+               "</p>" +
+               "</div>" +
+               "</div>" + GetCommentInput(item, model) + html.CreateComments(item, model).ToString() +
+               "</div>" +
+               "</div>" +
+               "</div>", item.PostedTime.ToShortTimeString(), user.UserName, item.Text, item.LikeCount, item.Id, url);
             }
-       
-            sb.AppendLine("<div class='media mt-4'>");
-            sb.AppendFormat("<img class='d-flex mr-3 rounded-circle' src='{0}'>", url);
-            sb.AppendLine("<div class='media-body'>");
-            sb.AppendFormat("<h5 class='mt-0'>{0}</h5>", user.UserName);
-            sb.AppendLine(item.Text);
-            sb.AppendFormat("<a onclick='ShowCommentInput({0})'>Reply</a>", item.Id);
 
-            GetCommentInput(sb, item, model);
+           
 
-            sb.AppendLine(html.CreateComments(item, model).ToString());
-
-            sb.AppendLine("</div>");
-            sb.AppendLine("</div>");
         }
 
-        private static void GetCommentInput(StringBuilder sb, Comment item, PostViewModel model)
+        private static string GetCommentInput(Comment item, PostViewModel model)
         {
-          
-            sb.AppendFormat("<div class='card my-4' id='{0}' style='display: none;'>", item.Id);
-            sb.AppendLine("<h5 class='card-header'>Leave a Comment:</h5>");
-            sb.AppendLine("<div class='card-body'>");
-            sb.AppendLine("<form action='/Post/AddComment' method='post'>");
-            sb.AppendFormat("<input hidden ='true' name='PostId' value='{0}' />", item.PostId);
-            sb.AppendFormat("<input hidden ='true' name='ParentId' value={0} />", item.Id);
-            sb.AppendFormat("<input hidden ='true' name='UserId' value={0} />", model.CurrentUserId);
-            sb.AppendLine("<div class='form-group'>");
-            sb.AppendLine("<textarea name='Text' class='form-control' rows='2'></textarea>");
-            sb.AppendLine("</div>");
-            sb.AppendLine("<button type='submit' class='btn btn-primary'>Submit</button>");
-            sb.AppendLine("</form>");
-            sb.AppendLine("</div>");
-            sb.AppendLine("</div>");
+            var stringBuilder = new StringBuilder();
+            if (model.CurrentUserId != "")
+            {
+                stringBuilder.AppendFormat("<div class='card my-4' id='{0}' style='display: none' >", item.Id);
+                // sb.AppendLine("<h5 class='card-header'>Leave a Comment:</h5>");
+                stringBuilder.AppendLine("<div class='card-body'>");
+                stringBuilder.AppendLine("<form action='/Post/AddComment' method='post'>");
+                stringBuilder.AppendFormat("<input hidden ='true' name='PostId' value='{0}' />", item.PostId);
+                stringBuilder.AppendFormat("<input hidden ='true' name='ParentId' value={0} />", item.Id);
+                stringBuilder.AppendFormat("<input hidden ='true' name='UserId' value={0} />", model.CurrentUserId);
+                stringBuilder.AppendLine("<div class='form-group'>");
+                stringBuilder.AppendLine("<textarea name='Text' class='form-control' rows='2'></textarea>");
+                stringBuilder.AppendLine("</div>");
+                stringBuilder.AppendLine("<button type='submit' class='btn btn-primary'>Submit</button>");
+                stringBuilder.AppendLine("</form>");
+                stringBuilder.AppendLine("</div>");
+                stringBuilder.AppendLine("</div>");
+            }
+
+            return stringBuilder.ToString();
+        }
+        private static string GetIconLike(Comment item, PostViewModel model)
+        {
+            var stringBuilder = new StringBuilder();
+            if (model.CurrentUserId == "")
+            {
+                stringBuilder.AppendFormat("<i class='fa fa-heart-o'></i><span>{0}</span>", item.LikeCount);
+
+            }
+            else
+            {
+                if (model.Likes.Where(x => x.UserId == model.CurrentUserId & x.CommentId == item.Id).FirstOrDefault() == null)
+                {
+                    stringBuilder.AppendFormat("<a class='like' id='like-{0}' onclick='like({0})'>", item.Id);
+                    stringBuilder.AppendLine("<i class='fa fa-heart-o'></i>");
+                    stringBuilder.AppendFormat("<span>{0}</span>", item.LikeCount);
+                    stringBuilder.AppendLine("</a>");
+                }
+                else
+                {
+                    stringBuilder.AppendLine("<i class='fa fa-heart'></i>");
+                    stringBuilder.AppendFormat("<span>{0}</span>", item.LikeCount);
+                }
+            }
+            return stringBuilder.ToString();
         }
     }
 }

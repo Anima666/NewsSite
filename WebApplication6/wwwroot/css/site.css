@@ -1,15 +1,49 @@
 ﻿.card {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+}
+
+.card-inner {
+    margin-left: 2rem;
+}
+.rating i{
+    color:green;
+}
+.card-sub .card {
+    border: none;
 }
 
 .fill a {
     color: white;
     text-shadow: 1px 1px 1px black;
 }
+.stats{
+    margin-top:10px;
+    font-size:20px;
+}
+
+.fa-heart {
+    color: red;
+}
 
 .fill {
     height: 200px;
 }
+.articlesBtn .btn {
+    margin-top: 10px;
+}
+.fill2 {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.imageArticle {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 40%;
+}
+
 
 .fill-logo img {
     height: 300px;
@@ -53,6 +87,10 @@
 
 .Main {
     margin-top: 70px;
+}
+
+.fa-heart-o:hover {
+    color: red;
 }
 
 .input-validation-error {

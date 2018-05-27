@@ -20,23 +20,16 @@
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-
             reader.onload = function (e) {
                 $('#img-upload').attr('src', e.target.result);
             }
-
             reader.readAsDataURL(input.files[0]);
         }
     }
-
     $("#imgInp").change(function () {
         readURL(this);
     });
 });
-
-
-
-
 
 function CreateInputTag() {
 
@@ -44,10 +37,27 @@ function CreateInputTag() {
         var elementJq = $('<input>', {
             value: instance.getSelection()[i].name,
             name: "tags[" + i + "].Name",
-            //  id: "tags[" + i + "].Name",
             style: "display:none",
         });
 
         $('#FormEdit').append(elementJq);
     }
+}
+
+function like(id) {
+    $.ajax({
+        type: "POST",
+        url: "/Post/LikeThis/" + id,
+        dataType: "json",
+        success: function (msg) {
+            var i = $("#like-" + id + " i");
+            i.removeClass("fa-heart-o").addClass("fa-heart");
+            $("#like-" + id + " span").text(msg);
+        }
+    });
+}
+function SaveMarkDownText() {
+    $("#Post_Text").val(simplemde.value());
+
+    CreateInputTag();
 }

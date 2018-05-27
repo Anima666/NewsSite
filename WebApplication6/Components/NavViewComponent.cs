@@ -11,6 +11,7 @@ namespace NewsSite.WebUi.Components
     public class NavTagsViewComponent : ViewComponent
     {
         private IPostRepository repository;
+        private int countArticle = 4;
 
         public NavTagsViewComponent(IPostRepository repo)
         {
@@ -22,7 +23,7 @@ namespace NewsSite.WebUi.Components
             SidePanelViewModel model = new SidePanelViewModel
             {
                 Categories = repository.Categories.OrderByDescending(n => n.Name.Length).Select(x => x.Name),
-                Posts = repository.Posts.OrderByDescending(p => p.DateChanged).Take(4),
+                Posts = repository.Posts.OrderByDescending(p => p.DateChanged).Take(countArticle),
             };
 
             return View(model);
