@@ -12,7 +12,7 @@ namespace WebApplication6.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("List","Post");
         }
 
         public IActionResult About()

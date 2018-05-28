@@ -22,10 +22,7 @@ namespace NewsSite.WebUi
             {
                 await roleManager.CreateAsync(new IdentityRole("writer"));
             }
-            if (await roleManager.FindByNameAsync("user") == null)
-            {
-                await roleManager.CreateAsync(new IdentityRole("user"));
-            }
+           
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
                 User admin = new User { Email = adminEmail, UserName = adminEmail };

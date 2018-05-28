@@ -1,14 +1,11 @@
 ﻿
 @{
-    ViewData["Title"] = "_AdminLayout";
+    ViewData["Title"] = "AdminPanel";
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
-<html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <environment include="Development">
+    @*<environment include="Development">*@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
         <link href="~/css/magicsuggest.css" rel="stylesheet" type="text/css">
 
@@ -16,27 +13,21 @@
         <script src="https://code.jquery.com/jquery-3.3.1.js"
                 integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
                 crossorigin="anonymous"></script>
-
         <script src="~/js/magicsuggest.js"></script>
         <script src="~/js/site.js"></script>
-    </environment>
-    <title></title>
+    @*</environment>*@
 </head>
+
+
 <body>
     <div>
-        @if (TempData["message"] != null)
-        {
-            <div class="alert alert-success">@TempData["message"]</div>
-        }
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     @RenderBody()
                 </div>
-
             </div>
         </div>
-
     </div>
 </body>
 </html>

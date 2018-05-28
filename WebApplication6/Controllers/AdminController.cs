@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace NewsSite.WebUi.Controllers
 {
-    //[Authorize(Roles = "admin")]
+ 
     [Authorize(Roles = "admin, writer")]
     public class AdminController : Controller
     {
@@ -46,7 +46,6 @@ namespace NewsSite.WebUi.Controllers
             };
             return View("Edit", model);
         }
-      //  [Authorize(Roles = "writer")]
         public ViewResult Edit(int postId)
         {
 
@@ -73,10 +72,9 @@ namespace NewsSite.WebUi.Controllers
                     deletedPost.Title);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("UserArticles", "Manage");
         }
 
-     //   [Authorize(Roles = "writer")]
         [HttpPost]
         public async Task<ActionResult> Edit(Post post, List<Tag> tags, IFormFile uploadedFile)
         {
@@ -95,10 +93,7 @@ namespace NewsSite.WebUi.Controllers
             }
             else
             {
-               // Post post2 = repository.Posts.First(p => p.PostId == post.PostId);
-
                 EditPostViewModel model = GetEditPostViewModel(post);
-                // Что-то не так со значениями данных
                 return View(model);
             }
         }

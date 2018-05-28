@@ -15,6 +15,7 @@
 </script>
 
 <hr />
+
 <form asp-action="Edit" asp-controller="Admin" enctype="multipart/form-data" method="post" id="FormEdit">
     <div class="panel-body">
         <div class="form-group">
@@ -97,7 +98,7 @@
         initialValue: $('#Post_Text').val(),
         insertTexts: {
             horizontalRule: ["", "\n\n-----\n\n"],
-            image: ["![](http://", ")"],
+            image: ["![image](http://", ")"],
             link: ["[", "](http://)"],
             table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
         },

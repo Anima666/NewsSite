@@ -42,7 +42,7 @@ namespace NewsSite.WebUi.HtmlHelpers
                "<div class='card-body'>" +
                "<div class='row'>" +
                "<div class='сol-sm-2 col-lg-2'>" +
-               "<img src = '{5}' class='fill2' />" +
+               "<img src = '{5}' class='fluid-profile' />" +
                "<p class='text-secondary text-center'>{0}</p></div>" +
                "<div class='col-sm-10 col-lg-10'>" +
                "<p>" +
@@ -76,9 +76,9 @@ namespace NewsSite.WebUi.HtmlHelpers
                 // sb.AppendLine("<h5 class='card-header'>Leave a Comment:</h5>");
                 stringBuilder.AppendLine("<div class='card-body'>");
                 stringBuilder.AppendLine("<form action='/Post/AddComment' method='post'>");
-                stringBuilder.AppendFormat("<input hidden ='true' name='PostId' value='{0}' />", item.PostId);
-                stringBuilder.AppendFormat("<input hidden ='true' name='ParentId' value={0} />", item.Id);
-                stringBuilder.AppendFormat("<input hidden ='true' name='UserId' value={0} />", model.CurrentUserId);
+                stringBuilder.AppendFormat("<input type = 'hidden' name='PostId' value='{0}' />", item.PostId);
+                stringBuilder.AppendFormat("<input hidden = 'true' name='ParentId' value={0} />", item.Id);
+                stringBuilder.AppendFormat("<input hidden = 'true' name='UserId' value={0} />", model.CurrentUserId);
                 stringBuilder.AppendLine("<div class='form-group'>");
                 stringBuilder.AppendLine("<textarea name='Text' class='form-control' rows='2'></textarea>");
                 stringBuilder.AppendLine("</div>");

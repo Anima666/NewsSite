@@ -1,10 +1,13 @@
-﻿@model NewsSite.WebUi.ViewModel.ChangeRoleViewModel
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model NewsSite.WebUi.ViewModel.ChangeRoleViewModel
+
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = @Localizer["Edit"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Изменение ролей для пользователя @Model.UserEmail</h2>
+<h2>@Localizer["Change role for user"] @Model.UserEmail</h2>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" name="userId" value="@Model.UserId" />
@@ -15,5 +18,5 @@
                    @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
             }
     </div>
-    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <button type="submit" class="btn btn-primary">@Localizer["Save"]</button>
 </form>

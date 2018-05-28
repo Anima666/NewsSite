@@ -4,14 +4,21 @@
 @model IEnumerable<NewsSite.Domain.Entities.Post>
 @inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = @Localizer["Profile"];
+    ViewData["Title"] = @Localizer["Articles"];
     ViewData.AddActivePage(ManageNavPages.UserArticles);
 }
 
 <br />
-<p>
-    <a class="btn btn-secondary" asp-action="Create" asp-controller="Admin">@Localizer["Create New"]</a>
-</p>
+@if (User.IsInRole("writer") || User.IsInRole("admin"))
+{
+    <p>
+        <a class="btn btn-secondary" asp-action="Create" asp-controller="Admin">@Localizer["Create New"]</a>
+    </p>
+}
+else
+{
+    <h4>@Localizer["Get role writer"]</h4>
+}
 
 <table class="table">
     <thead>
@@ -28,34 +35,34 @@
         </tr>
     </thead>
     <tbody>
-     
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td scope="row">
-                        <img src="@Url.Content(@item.Path)" class="imageArticle" />
-                    </td>
-                    <td scope="row">
-                        @item.User.UserName
-                    </td>
-                    <td scope="row">
-                        <a asp-action="ShowPost" asp-controller="Post" asp-route-id="@item.PostId">@item.Title</a>
-                    </td>
-                    <td scope="row">
-                        <div class="articlesBtn">
-                            @using (Html.BeginForm("Delete", "Admin"))
-                            {
-                                <a class="btn btn-sm btn-primary" asp-action="Edit" asp-controller="Admin" asp-route-PostId="@item.PostId">@Localizer["Edit"]</a>
-                                @Html.Hidden("PostId", item.PostId)
-                                <input type="submit"
-                                       class="btn btn-sm btn-danger"
-                                       value="@Localizer["Delete"]" />
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
-   
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td scope="row">
+                    <img src="@Url.Content(@item.Path)" class="imageArticle" />
+                </td>
+                <td scope="row">
+                    @item.User.UserName
+                </td>
+                <td scope="row">
+                    <a asp-action="ShowPost" asp-controller="Post" asp-route-id="@item.PostId">@item.Title</a>
+                </td>
+                <td scope="row">
+                    <div class="articlesBtn">
+                        @using (Html.BeginForm("Delete", "Admin"))
+                        {
+                            <a class="btn btn-sm btn-primary" asp-action="Edit" asp-controller="Admin" asp-route-PostId="@item.PostId">@Localizer["Edit"]</a>
+                            @Html.Hidden("PostId", item.PostId)
+                            <input type="submit"
+                                   class="btn btn-sm btn-danger"
+                                   value="@Localizer["Delete"]" />
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+
     </tbody>
 </table>
 

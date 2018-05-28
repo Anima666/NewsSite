@@ -13,18 +13,18 @@
         <tr>
             <td>
                 <div class="text-center">
-                    <img src="@Url.Content(@user.UrlImage)" class="fill2" />
+                    <img src="@Url.Content(@user.UrlImage)" class="fluid-profile " />
                     <p>
                         <label>@user.Likes<i class="fa fa-heart-o"></i></label>
                     </p>
                 </div>
             </td>
             <td>
-                <a asp-action="UserArticles" asp-controller="Manage" asp-route-userId="@user.Id">@user.Email</a>
+                <a asp-action="UserArticles" asp-controller="Manage" asp-route-userId="@user.Id">@user.UserName</a>
             </td>
             <td>
                 <form asp-action="Delete" asp-route-id="@user.Id" method="post">
-                    <a class="btn btn-sm btn-primary" asp-action="ChangePassword" asp-route-id="@user.Id">@Localizer["Change password"]</a>
+                
                     <a class="btn btn-sm btn-success" asp-controller="Roles" asp-action="Edit" asp-route-userid="@user.Id">@Localizer["Roles"]</a>
                     <button type="submit" class="btn btn-sm btn-danger">
                         @Localizer["Delete"]

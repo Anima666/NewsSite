@@ -15,7 +15,7 @@ namespace NewsSite.WebUi.Controllers
     {
         RoleManager<IdentityRole> _roleManager;
         UserManager<User> _userManager;
-        SignInManager<User> _signInManager;
+        readonly SignInManager<User> _signInManager;
 
         public RolesController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager, SignInManager<User> signInManager)
         {
@@ -103,7 +103,7 @@ namespace NewsSite.WebUi.Controllers
 
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
 
-                return RedirectToAction("UserList");
+                return RedirectToAction("Index", "Users");
             }
 
             return NotFound();

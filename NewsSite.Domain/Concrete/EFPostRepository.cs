@@ -22,7 +22,7 @@ namespace NewsSite.Domain.Concrete
 
         public IEnumerable<Post> Posts
         {
-            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(c => c.Category).Include(u => u.User).Include(r=>r.Rating).ToList(); }
+            get { return context.Posts.Include(e => e.PostTags).ThenInclude(e => e.Tag).Include(c => c.Category).Include(u => u.User).Include(r=>r.Rating).Include(c=>c.Comments).ToList(); }
         }
 
         public IEnumerable<Tag> Tags
@@ -59,6 +59,7 @@ namespace NewsSite.Domain.Concrete
             Post dbEntry = context.Posts.Find(postId);
             if (dbEntry != null)
             {
+               
                 context.Posts.Remove(dbEntry);
                 context.SaveChanges();
             }
@@ -138,18 +139,6 @@ namespace NewsSite.Domain.Concrete
             };
             context.Comments.Add(Comment);
             context.SaveChanges();
-        }
-
-        public bool CheckUserPressRatings(User CurentUser, Post post)
-        {
-            Rating rating = context.Ratings.Where(x => x.UserId == CurentUser.Id & x.PostId == post.PostId).FirstOrDefault();
-
-            if (rating == null)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         public void SetRating(int id, Post post, User CurentUser, int value)

@@ -10,8 +10,7 @@
 
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery-bar-rating/jquery.barrating.js"></script>
-
+    <script src="~/lib/jquery-bar-rating/jquery.barrating.js"></script>
 
 
 @foreach (var item in @Model.Posts)
@@ -20,5 +19,6 @@
 }
 
 <div>
-    @Html.PageLinks(Model.PagingInfo, x => Url.Action("List", new { page = x, tag = Model.CurrentCategory }))
+    @Html.PageLinks(Model.PagingInfo, x => Url.Action("List", new { page = x, category = Model.CurrentCategory }))
 </div>
+

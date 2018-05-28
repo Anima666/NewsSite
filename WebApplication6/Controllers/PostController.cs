@@ -18,6 +18,7 @@ using System.Globalization;
 
 namespace NewsSite.WebUi.Controllers
 {
+ 
     public class PostController : Controller
     {
 
@@ -36,7 +37,7 @@ namespace NewsSite.WebUi.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetLanguage(string culture, string returnUrl)
+        public IActionResult SetLanguage(string culture)
         {
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
@@ -56,6 +57,9 @@ namespace NewsSite.WebUi.Controllers
             if (posts.Count() == 0)
             {
                 posts = repository.Posts.Where(p => p.Text.ToUpper().Contains(text.ToUpper()));
+
+                //if (posts.Count() == 0)
+                  //  posts = repository.Posts.Where(p => p.Comments.Where(comment => comment.Text.ToUpper().Contains(text.ToUpper()));
 
             }
 

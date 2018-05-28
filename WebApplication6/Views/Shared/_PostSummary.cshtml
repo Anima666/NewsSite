@@ -12,7 +12,6 @@
     string userId = UserManager.GetUserId(User);
 }
 
-
 <div class="card mb-4">
     <div class="fill-logo">
         <img src="@Url.Content(Model.Post.Path)">
@@ -34,7 +33,7 @@
         <div class="card-footer text-muted">
             @Localizer["Posted on"] @Model.Post.DateChanged.ToString("f")
             <div class="float-right">
-                <select id="rating-@Model.Post.PostId" data-id="@Model.Post.PostId">
+                <select id="rating-@Model.Post.PostId">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -46,37 +45,33 @@
     </div>
 </div>
 
+
+
 <script type="text/javascript">
-
-    function setReadOnly(flag) {
-        console.log(@Model.Post.PostId)
-        $('#rating-@Model.Post.PostId').barrating('readonly', flag);
-
-    }
 
     $(function () {
 
         var idRating = '#rating-@Model.Post.PostId';
+
         $(idRating).barrating({
-        theme: 'bars-reversed',
-        onSelect: function (value, text, event) {
-        if (typeof (event) !== 'undefined') {
-        var id = $(idRating).data("id");
-        $.post("/Post/SetRating", { id : parseInt(id), value : value }, function (data) {
-        $(idRating).barrating('readonly', true);
-        $(idRating).barrating('set', data);
-        });
-        }
-        },
-    readonly:true,
-        initialRating: @Model.Post.ValueRating,
+
+            theme: 'bars-reversed',
+            onSelect: function (value, text, event) {
+                if (typeof (event) !== 'undefined') {
+                    $.post("/Post/SetRating", { id: parseInt(@Model.Post.PostId), value: value }, function (data) {
+                        $(idRating).barrating('readonly', true);
+                        $(idRating).barrating('set', data);
+                    });
+                }
+            },
+            readonly: true,
+            initialRating: @Model.Post.ValueRating,
         });
 
-
-         @if (User.Identity.IsAuthenticated & Model.Ratings.Where(r=>r.UserId==userId).Count() == 0)
-         {
+        @if (User.Identity.IsAuthenticated & Model.Ratings.Where(r=>r.UserId==userId).Count() == 0)
+        {
             @:$(idRating).barrating('readonly', false);
-         }
+        }
         });
 </script>
 

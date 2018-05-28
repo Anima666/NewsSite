@@ -7,8 +7,9 @@
 @inject SignInManager<User> SignInManager
 
 <ul class="nav nav-tabs">
-    <li class="nav-item"><a asp-action="Index" asp-controller="Manage" class="@ManageNavPages.IndexNavClass(ViewContext)">@Localizer["Profile"]</a></li>
-    @*<li class="nav-item"><a asp-action="Index" asp-controller="Admin" class="nav-link">Articles</a></li>*@
+    <li class="nav-item">
+        <a asp-action="Index" asp-controller="Manage" class="@ManageNavPages.IndexNavClass(ViewContext)">@Localizer["Profile"]</a>
+    </li>
     <li class="nav-item">
         <a asp-action="UserArticles" asp-controller="Manage"
            class="@ManageNavPages.IndexListPost(ViewContext)">@Localizer["Articles"]</a>
@@ -20,7 +21,6 @@
 
     @if (User.IsInRole("admin"))
     {
-
         <li class="nav-item">
             <a asp-action="Index" asp-controller="Users" class="@ManageNavPages.IndexAllUsers(ViewContext)">@Localizer["List of users"]</a>
         </li>
@@ -28,7 +28,6 @@
             <a asp-action="Index" asp-controller="Roles" class="nav-link">@Localizer["Roles"]</a>
         </li>
     }
-
 
 </ul>
 

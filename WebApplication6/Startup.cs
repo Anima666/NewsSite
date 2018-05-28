@@ -32,7 +32,7 @@ namespace WebApplication6
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("TestAuth");
@@ -68,6 +68,7 @@ namespace WebApplication6
               {
                   options.ConsumerKey = "lRUbVkZ4gFBXUJ8n0q7Qj0eFV";
                   options.ConsumerSecret = "TgUvk9OyhhaWyJIGazRW1N6EDdDXl273MyuSkaCi5JhUQ5UPCP";
+                  //options.
               })
               .AddVkontakte(options =>
               {
@@ -121,25 +122,26 @@ namespace WebApplication6
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-             name: null,
-             template: "{controller=Post}/{action=ShowPost}/{id?}"
-             );
 
                 routes.MapRoute(
              name: null,
-             template: "{tag}/Page{page}",
-             defaults: new { controller = "Post", action = "List", tag = (string)null });
+             template: "{category}/Page/{page}",
+             defaults: new { controller = "Post", action = "List", category = (string)null });
+
+            //    routes.MapRoute(
+            //name: null,
+            //template: "{controller}/Post/{id}",
+            //defaults: new { controller = "Post", action = "ShowPost" });
 
                 routes.MapRoute(
               name: null,
-              template: "Page{page}",
+              template: "Page/{page}",
               defaults: new { controller = "Post", action = "List" });
 
                 routes.MapRoute(
-                name: "Default",
-                template: "{controller}/{action}",
-                defaults: new { controller = "Post", action = "List" });
+                name: "default",
+                template: "{controller}/{action}/{id?}",
+                 defaults: new { controller = "Post", action = "List" });
             });
         }
     }

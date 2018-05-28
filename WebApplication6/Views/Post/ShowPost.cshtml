@@ -1,10 +1,8 @@
 ﻿@using NewsSite.WebUi.HtmlHelpers;
-@using NewsSite.WebUi.ViewModel;
 @using NewsSite.Domain.Entities;
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @model NewsSite.WebUi.Models.PostViewModel
-
 
 
 @{
@@ -35,7 +33,6 @@
     <!-- Date/Time -->
     <p>
         @Localizer["Posted on"] @Model.Post.DateChanged.ToString("f")
-
     </p>
     <hr>
 
@@ -57,7 +54,7 @@
     }
 
 
-    <select id="example" data-id="@Model.Post.PostId">
+    <select id="rating-@Model.Post.PostId">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -97,8 +94,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-2 col-lg-2">
-                        <img src="@Url.Content(commentUser.UrlImage)" class="fill2" />
-
+                        <img src="@Url.Content(commentUser.UrlImage)" class="fluid-profile" />
                         <p class="text-secondary text-center"> @item.PostedTime.ToShortTimeString()</p>
                     </div>
                     <div class="col-sm-10 col-lg-10">
@@ -139,12 +135,14 @@
         </div>
 
         <div class="card my-4" id="@item.Id" style="display:none;">
-            <h5 class="card-header">Leave a Comment:</h5>
+            <h5 class="card-header">
+                @Localizer["Leave a Comment:"]
+            </h5>
             <div class="card-body">
-                <form asp-controller="Post" asp-action="AddComment" method="post">
-                    <input name="postId" value="@item.Post.PostId" />
-                    <input name="parentId" value="@item.Id" />
-                    <input name="UserId" value="@Model.CurrentUserId" />
+                <form asp-controller="Post" asp-action="AddComment"
+                      asp-route-postId="@Model.Post.PostId" asp-route-UserId="@Model.CurrentUserId"
+                      asp-route-parentId="@item.Id"
+                      method="post">
                     <div class="form-group">
                         <textarea name="Text" class="form-control" rows="2"></textarea>
                     </div>
@@ -162,47 +160,42 @@
     }
 </div>
 
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script src="~/lib/jquery-bar-rating/jquery.barrating.js"></script>
-
+<script src="~/lib/jquery/dist/jquery.js"></script>
 
 <script type="text/javascript">
-    $(function () {
-        $('#example').barrating({
+     $(function () {
+         var idRating = '#rating-@Model.Post.PostId';
+
+         $(idRating).barrating({
             theme: 'bars-reversed',
-            onSelect: function (value, text, event) {
-                if (typeof (event) !== 'undefined') {
-                    var id = $('#example').data("id");
-                    $.post("/Post/SetRating", { id : parseInt(id), value : value }, function (data) {
-                        $('#example').barrating('readonly', true);
-                        $('select').barrating('set', data);
-                    });
+            onSelect:
+                function (value, text, event) {
+                    if (typeof (event) !== 'undefined') {
+                        $.post("/Post/SetRating", { id: parseInt(@Model.Post.PostId), value: value },
+                            function (data) {
+                                $(idRating).barrating('readonly', true);
+                                $(idRating).barrating('set', data);
+                            });
+                    }
+                },
+            readonly: true,
+            initialRating: @Model.Post.ValueRating,
+         });
 
-                }
-            },
-            initialRating: @Model.Post.Rating
-        });
-    });
+         @if (User.Identity.IsAuthenticated & Model.Post.Rating.Where(r => r.UserId == Model.CurrentUserId).Count() == 0)
+         {
+            @:$(idRating).barrating('readonly', false);
+        }
+     });
 </script>
-@if (User.Identity.IsAuthenticated)
-{
-    <script>
-        $('#example').barrating('readonly', false);
-    </script>
-}
-else
-{
-    <script>
-        $('#example').barrating('readonly', true);
-    </script>
 
-}
+
+
+
 <script>
+
     function ShowCommentInput(id) {
         $("#" + id).toggle();
     }
-
 
 </script>

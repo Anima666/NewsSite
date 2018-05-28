@@ -16,7 +16,7 @@ namespace NewsSite.Domain.Entities
         [Display(Name = "Title")]
         public string Title { get; set; }
 
-        [StringLength(300, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 100)]
+        [StringLength(300, ErrorMessage = "PasswordLength", MinimumLength = 100)]
         [Required(ErrorMessage = "Please input description post")]
         [Display(Name = "Description")]
         public string Description { get; set; }
@@ -44,6 +44,7 @@ namespace NewsSite.Domain.Entities
         public string Path { get; set; }
 
         public ICollection<Rating> Rating { get;  } = new List<Rating>();
+        public ICollection<Comment> Comments { get; } = new List<Comment>();
 
 
 

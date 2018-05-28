@@ -129,10 +129,11 @@ namespace NewsSite.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            user.UserName = model.Username;
+            //user.UserName = model.Username;
             user.MinimalToShow = model.MinimalToshow;
 
             var setUrlImage = await _userManager.UpdateAsync(user);
+            await _userManager.SetUserNameAsync(user, model.Username);
             if (!setUrlImage.Succeeded)
             {
                 throw new ApplicationException($"Unexpected error occurred for user with ID '{user.Id}'.");

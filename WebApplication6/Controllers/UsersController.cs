@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NewsSite.Domain.Abstract;
 using NewsSite.Domain.Entities;
 using NewsSite.WebUi.ViewModel;
 
@@ -14,10 +15,12 @@ namespace NewsSite.WebUi.Controllers
     public class UsersController : Controller
     {
         UserManager<User> _userManager;
+        private readonly IPostRepository repository;
 
-        public UsersController(UserManager<User> userManager)
+        public UsersController(UserManager<User> userManager, IPostRepository repository)
         {
             _userManager = userManager;
+            this.repository = repository;
         }
         public IActionResult Index() => View(_userManager.Users.ToList());
 
@@ -90,7 +93,13 @@ namespace NewsSite.WebUi.Controllers
             User user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
+                foreach (var item in repository.Posts.Where(p=>p.UserId==user.Id))
+                {
+                    repository.DeletePost(item.PostId);
+                }
+               
                 IdentityResult result = await _userManager.DeleteAsync(user);
+
             }
             return RedirectToAction("Index");
         }
